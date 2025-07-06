@@ -1,27 +1,24 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario Max</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
     <header>
-        <div class="logo">
-            <img src="img/logo.png" alt="Tu Logo Aquí">
-        </div>
+        <img src="img/logo.png" alt="Tu Logo Aquí" class="logo">
         <h1>Inventario Max</h1>
     </header>
-
     <main>
-        <div class="controls">
+        <div class="controles">
             <button onclick="mostrarFormulario('nuevo')">➕ Agregar Producto</button>
             <button onclick="mostrarFormulario('entrada')">🔼 Entrada</button>
             <button onclick="mostrarFormulario('salida')">🔽 Salida</button>
-            <input type="text" id="busqueda" placeholder="Buscar..." oninput="buscarProducto()">
+            <input type="text" placeholder="Buscar...">
         </div>
-
         <table id="tabla-inventario">
             <thead>
                 <tr>
@@ -29,22 +26,16 @@
                     <th>Nombre</th>
                     <th>Categoría</th>
                     <th>Proveedor</th>
-                    <th>Compra</th>
-                    <th>Venta</th>
                     <th>Stock</th>
-                    <th>Acciones</th>
+                    <th>Precio</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
-
-        <section id="formulario-producto" class="oculto"></section>
     </main>
-
     <footer>
-        <p>Inventario Max - Sistema básico v1.0</p>
+        <p>Inventario Max – Sistema básico v1.0</p>
     </footer>
-
     <script src="script.js"></script>
 </body>
 </html>
