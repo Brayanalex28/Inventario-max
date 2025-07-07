@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventario Max – Iniciar sesión</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+
+    .izquierda {
+      flex: 1;
+      background-color: #000;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .izquierda h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .formulario {
+      width: 100%;
+      max-width: 350px;
+    }
+
+    .formulario input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    .formulario .campo-con-icono {
+      position: relative;
+    }
+
+    .formulario .campo-con-icono input {
+      padding-right: 40px;
+    }
+
+    .formulario .campo-con-icono img {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      filter: invert(100%);
+    }
+
+    .formulario button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    .derecha {
+      flex: 1;
+      background-image: url('https://i.ibb.co/YT9ZqQh/ferreteria.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .error {
+      color: red;
+      margin-top: 5px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .derecha {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="izquierda">
+    <img src="img/logo.png" alt="Logo" style="width: 60px; margin-bottom: 20px;">
+    <h1>Inventario Max</h1>
+    <form class="formulario" onsubmit="return iniciarSesion()">
+      <input type="text" id="usuario" placeholder="Usuario" required>
+
+      <div class="campo-con-icono">
+        <input type="password" id="clave" placeholder="Contraseña" required>
+        <img src="https://cdn-icons-png.flaticon.com/512/709/709612.png" alt="Mostrar" onclick="togglePassword(this)">
+      </div>
+
+      <button type="submit">Ingresar</button>
+      <div id="mensajeError" class="error"></div>
+    </form>
+  </div>
+
+  <div class="derecha"></div>
+
+  <script>
+    function togglePassword(icono) {
+      const input = document.getElementById("clave");
+      if (input.type === "password") {
+        input.type = "text";
+        icono.src = "https://cdn-icons-png.flaticon.com/512/709/709612.png";
+      } else {
+        input.type = "password";
+        icono.src = "https://cdn-icons-png.flaticon.com/512/709/709612.png";
+      }
+    }
+
+    function iniciarSesion() {
+      const usuario = document.getElementById("usuario").value;
+      const clave = document.getElementById("clave").value;
+      const mensaje = document.getElementById("mensajeError");
+
+      if (usuario === "admin" && clave === "1234") {
+        window.location.href = "index.html";
+      } else {
+        mensaje.textContent = "Usuario o contraseña incorrectos.";
+      }
+
+      return false; // evita que el formulario se recargue
+    }
+  </script>
+
+</body>
+</html>
