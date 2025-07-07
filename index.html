@@ -160,4 +160,51 @@
         return;
       }
 
-      productos.push({ codigo, nombre, categoria, stock
+      productos.push({ codigo, nombre, categoria, stock, precio });
+      guardarProductos();
+      mostrarProductos();
+      limpiarFormulario();
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("codigo").value = "";
+      document.getElementById("nombre").value = "";
+      document.getElementById("categoria").value = "";
+      document.getElementById("stock").value = "";
+      document.getElementById("precio").value = "";
+    }
+
+    function buscarProducto() {
+      const texto = document.getElementById("buscador").value.toLowerCase();
+      const resultados = productos.filter(p =>
+        p.codigo.toLowerCase().includes(texto) ||
+        p.nombre.toLowerCase().includes(texto) ||
+        p.categoria.toLowerCase().includes(texto)
+      );
+      mostrarProductos(resultados);
+    }
+
+    function eliminarProducto(index) {
+      if (confirm("¿Estás seguro de eliminar este producto?")) {
+        productos.splice(index, 1);
+        guardarProductos();
+        mostrarProductos();
+      }
+    }
+
+    function editarProducto(index) {
+      const producto = productos[index];
+      document.getElementById("codigo").value = producto.codigo;
+      document.getElementById("nombre").value = producto.nombre;
+      document.getElementById("categoria").value = producto.categoria;
+      document.getElementById("stock").value = producto.stock;
+      document.getElementById("precio").value = producto.precio;
+      eliminarProducto(index);
+    }
+
+    // Mostrar los productos al cargar la página
+    mostrarProductos();
+  </script>
+
+</body>
+</html>
