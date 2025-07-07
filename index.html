@@ -1,38 +1,61 @@
 <!DOCTYPE html><html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZGestión PRO</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #1c1c1c;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1f1f1f;
       color: white;
     }
     .sidebar {
-      width: 220px;
+      width: 240px;
       height: 100vh;
       position: fixed;
       background-color: #111;
       padding-top: 20px;
       transition: transform 0.3s ease;
+      overflow-y: auto;
     }
     .sidebar.hidden {
       transform: translateX(-100%);
     }
     .sidebar a {
-      padding: 10px 20px;
-      display: block;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       color: white;
       text-decoration: none;
+      border-bottom: 1px solid #333;
+      font-size: 15px;
     }
     .sidebar a:hover {
-      background-color: #575757;
+      background-color: #292929;
+    }
+    .cerrar-sesion {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+    }
+    .toggle-btn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background-color: #292929;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 18px;
+      z-index: 1000;
     }
     .main {
-      margin-left: 220px;
+      margin-left: 240px;
       padding: 20px;
       transition: margin-left 0.3s ease;
     }
@@ -46,30 +69,13 @@
     .precio::before {
       content: 'S/';
     }
-    .cerrar-sesion {
-      position: absolute;
-      bottom: 20px;
-      width: 100%;
-    }
-    .toggle-btn {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background-color: #444;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 5px;
-      z-index: 1000;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
     }
     th, td {
-      border: 1px solid #555;
+      border: 1px solid #444;
       padding: 10px;
       text-align: left;
     }
@@ -105,22 +111,22 @@
     if (!sesion) {
       window.location.href = 'login.html';
     }
-  </script>  <!-- Sidebar -->  <div class="sidebar" id="sidebar">
-    <a href="#" onclick="mostrarSeccion('inventario')">Inventario</a>
-    <a href="#" onclick="mostrarSeccion('entradas')">Entradas</a>
-    <a href="#" onclick="mostrarSeccion('salidas')">Salidas</a>
-    <a href="#" onclick="mostrarSeccion('boletas')">Boletas</a>
-    <a href="#">Facturas</a>
-    <a href="#">Reportes</a>
-    <a href="#">Gráficos</a>
-    <a href="#">Clientes</a>
-    <a href="#">Caja</a>
-    <a href="#">Usuarios</a>
-    <a href="#">Configuración</a>
-    <a class="cerrar-sesion" onclick="cerrarSesion()">Cerrar sesión</a>
-  </div>  <!-- Botón para ocultar sidebar --><button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-
-  <!-- Contenido principal -->  <div class="main" id="mainContent">
+  </script>  <button class="toggle-btn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>  <div class="sidebar" id="sidebar">
+    <a href="#" onclick="mostrarSeccion('inventario')"><i class="fas fa-box"></i> Inventario</a>
+    <a href="#" onclick="mostrarSeccion('entradas')"><i class="fas fa-plus-circle"></i> Entradas</a>
+    <a href="#" onclick="mostrarSeccion('salidas')"><i class="fas fa-minus-circle"></i> Salidas</a>
+    <a href="#" onclick="mostrarSeccion('boletas')"><i class="fas fa-receipt"></i> Boletas</a>
+    <a href="#"><i class="fas fa-file-invoice"></i> Facturas</a>
+    <a href="#"><i class="fas fa-chart-line"></i> Reportes</a>
+    <a href="#"><i class="fas fa-chart-pie"></i> Gráficos</a>
+    <a href="#"><i class="fas fa-user"></i> Clientes</a>
+    <a href="#"><i class="fas fa-cash-register"></i> Caja</a>
+    <a href="#"><i class="fas fa-users"></i> Usuarios</a>
+    <a href="#"><i class="fas fa-cog"></i> Configuración</a>
+    <a class="cerrar-sesion" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+  </div>  <div class="main" id="mainContent">
     <h1>ZGestión PRO</h1><div id="inventario" class="seccion activa">
   <h2>Inventario de productos</h2>
   <input type="text" id="busqueda" placeholder="Buscar por nombre o código...">
