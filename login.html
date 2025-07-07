@@ -1,117 +1,105 @@
-<!DOCTYPE html><html lang="es">
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - ZGestión PRO</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZGestión PRO - Iniciar Sesión</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #121212;
-      color: white;
       display: flex;
       height: 100vh;
-    }
-    .container {
-      display: flex;
-      flex: 1;
+      font-family: Arial, sans-serif;
     }
     .left {
       flex: 1;
-      background-image: url('imagen-login.jpg');
-      background-size: cover;
-      background-position: center;
+      background: url('https://i.imgur.com/XZlEkQW.jpg') no-repeat center center/cover;
     }
     .right {
       flex: 1;
+      background-color: #121212;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 40px;
-      background-color: #1e1e1e;
+      color: white;
     }
-    .form-box {
-      width: 100%;
-      max-width: 400px;
+    .form {
+      width: 300px;
     }
     h2 {
       margin-bottom: 20px;
-      color: #4CAF50;
-      text-align: center;
     }
     input {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 6px;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
       border: none;
-      background-color: #2c2c2c;
-      color: white;
-    }
-    .password-container {
-      position: relative;
-    }
-    .password-container i {
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #ccc;
     }
     button {
       width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      background-color: #4CAF50;
+      padding: 10px;
+      background-color: #4caf50;
       color: white;
-      font-size: 16px;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
     }
-    .logo {
-      width: 100px;
-      height: 100px;
-      background-color: #333;
-      margin: 0 auto 20px;
-      border-radius: 50%;
+    .eye {
+      position: relative;
+    }
+    .eye i {
+      position: absolute;
+      top: 35px;
+      right: 10px;
+      cursor: pointer;
+      color: gray;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="left"></div>
-    <div class="right">
-      <div class="form-box">
-        <div class="logo"></div>
-        <h2>Iniciar Sesión</h2>
-        <input type="text" id="usuario" placeholder="Usuario">
-        <div class="password-container">
-          <input type="password" id="contrasena" placeholder="Contraseña">
-          <i onclick="togglePassword()">👁️</i>
-        </div>
-        <button onclick="login()">Ingresar</button>
+  <div class="left">
+    <!-- Aquí irá tu logo o imagen -->
+  </div>
+  <div class="right">
+    <div class="form">
+      <h2>Iniciar Sesión</h2>
+      <input type="text" id="usuario" placeholder="Usuario" />
+      <div class="eye">
+        <input type="password" id="password" placeholder="Contraseña" />
+        <i onclick="togglePassword()" id="eyeIcon">👁️</i>
       </div>
+      <button onclick="login()">Ingresar</button>
     </div>
-  </div>  <script>
+  </div>
+
+  <script>
     function togglePassword() {
-      const pass = document.getElementById('contrasena');
-      pass.type = pass.type === 'password' ? 'text' : 'password';
+      const pwd = document.getElementById('password');
+      pwd.type = pwd.type === 'password' ? 'text' : 'password';
     }
 
     function login() {
-      const user = document.getElementById('usuario').value;
-      const pass = document.getElementById('contrasena').value;
+      const usuario = document.getElementById('usuario').value;
+      const password = document.getElementById('password').value;
+      const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 
-      const usuarioCorrecto = "admin";
-      const contrasenaCorrecta = "1234";
+      const usuarioValido = usuarios.find(u => u.usuario === usuario && u.password === password);
 
-      if (user === usuarioCorrecto && pass === contrasenaCorrecta) {
-        window.location.href = "index.html";
+      if (usuarioValido) {
+        localStorage.setItem('sesionActiva', JSON.stringify(usuarioValido));
+        window.location.href = 'index.html';
       } else {
-        alert("Usuario o contraseña incorrectos");
+        alert('Credenciales inválidas');
       }
     }
-  </script></body>
+
+    // Crear usuario administrador por defecto
+    if (!localStorage.getItem('usuarios')) {
+      const admin = [{ usuario: 'admin', password: '1234', rol: 'admin' }];
+      localStorage.setItem('usuarios', JSON.stringify(admin));
+    }
+  </script>
+</body>
 </html>
