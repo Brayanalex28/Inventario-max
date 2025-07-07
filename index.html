@@ -74,11 +74,26 @@
     .acciones .eliminar {
       background-color: #dc3545;
     }
+
+    /* Estilo de notificación */
+    #notificacion {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #28a745;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
+      font-weight: bold;
+      z-index: 999;
+    }
   </style>
 </head>
 <body>
 
-  <!-- 🔐 Protección por sesión activa -->
+  <!-- 🔐 Protección por login -->
   <script>
     if (localStorage.getItem("sesionActiva") !== "true") {
       window.location.href = "login.html";
@@ -115,12 +130,16 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Productos cargados aquí -->
+          <!-- Aquí se insertan los productos -->
         </tbody>
       </table>
     </section>
   </main>
 
+  <!-- 🔔 Notificación -->
+  <div id="notificacion">Producto agregado correctamente</div>
+
+  <!-- Scripts -->
   <script>
     let productos = JSON.parse(localStorage.getItem("productos")) || [];
 
@@ -164,6 +183,16 @@
       guardarProductos();
       mostrarProductos();
       limpiarFormulario();
+      mostrarNotificacion("Producto agregado correctamente");
+    }
+
+    function mostrarNotificacion(mensaje) {
+      const noti = document.getElementById("notificacion");
+      noti.innerText = mensaje;
+      noti.style.display = "block";
+      setTimeout(() => {
+        noti.style.display = "none";
+      }, 3000);
     }
 
     function limpiarFormulario() {
@@ -202,7 +231,7 @@
       eliminarProducto(index);
     }
 
-    // Mostrar los productos al cargar
+    // Mostrar al cargar
     mostrarProductos();
   </script>
 
