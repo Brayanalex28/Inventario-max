@@ -15,7 +15,6 @@
       display: flex;
       flex-direction: row;
       height: 100vh;
-      transition: all 0.3s ease;
     }
     .sidebar {
       width: 250px;
@@ -24,16 +23,9 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      transition: all 0.3s ease;
     }
-    .sidebar h2 {
-      font-size: 20px;
-      color: #4CAF50;
-      margin-bottom: 10px;
-    }
-    .sidebar .section {
-      margin-bottom: 15px;
-    }
+    .sidebar h2 { font-size: 20px; color: #4CAF50; margin-bottom: 10px; }
+    .sidebar .section { margin-bottom: 15px; }
     .sidebar .section-title {
       font-size: 14px;
       color: #888;
@@ -52,10 +44,9 @@
       border-radius: 5px;
       transition: background 0.3s;
       font-size: 15px;
+      cursor: pointer;
     }
-    .sidebar a:hover {
-      background-color: #333;
-    }
+    .sidebar a:hover { background-color: #333; }
     .main {
       flex: 1;
       padding: 20px;
@@ -67,29 +58,16 @@
       align-items: center;
       margin-bottom: 20px;
     }
-    .buscador {
-      width: 100%;
+    .seccion { display: none; }
+    .activo { display: block; }
+    input, button, select {
       padding: 10px;
-      border-radius: 5px;
-      border: none;
-      margin-bottom: 10px;
-    }
-    .formulario input, .formulario button {
-      width: 100%;
       margin: 5px 0;
-      padding: 10px;
       border-radius: 5px;
       border: none;
+      width: 100%;
     }
-    .formulario input[type="file"] {
-      color: white;
-    }
-    .formulario button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      margin-top: 10px;
-    }
+    button { background-color: #4CAF50; color: white; }
     table {
       width: 100%;
       margin-top: 20px;
@@ -102,71 +80,72 @@
     }
     th { background-color: #222; }
     .rojo { color: #ff4c4c; }
-    img.producto-img {
-      width: 50px;
-      height: auto;
-    }
-    canvas {
-      background-color: white;
-      border-radius: 5px;
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <h2>ZGestión PRO</h2><div class="section">
-  <div class="section-title">Inventario</div>
-  <a href="#"><i class="ri-archive-line"></i> Ver Todos</a>
-  <a href="#"><i class="ri-upload-2-line"></i> Entrada de productos</a>
-  <a href="#"><i class="ri-download-2-line"></i> Salida de productos</a>
-</div>
-
-<div class="section">
-  <div class="section-title">Ventas</div>
-  <a href="#"><i class="ri-user-3-line"></i> Clientes</a>
-  <a href="#"><i class="ri-file-list-3-line"></i> Notas de venta</a>
-  <a href="#"><i class="ri-file-text-line"></i> Facturas</a>
-  <a href="#"><i class="ri-receipt-line"></i> Boletas</a>
-  <a href="#"><i class="ri-truck-line"></i> Guías</a>
-</div>
-
-<div class="section">
-  <div class="section-title">Reportes</div>
-  <a href="#" onclick="generarPDF()"><i class="ri-file-download-line"></i> Reporte de stock</a>
-  <a href="#"><i class="ri-bar-chart-2-line"></i> Reporte de ventas</a>
-</div>
-
-<div class="section">
-  <div class="section-title">Configuración</div>
-  <a href="#"><i class="ri-user-settings-line"></i> Usuarios y roles</a>
-  <a href="#"><i class="ri-image-line"></i> Cambiar logo</a>
-  <a href="#"><i class="ri-edit-box-line"></i> Nombre del sistema</a>
-  <a href="#" onclick="cerrarSesion()"><i class="ri-logout-box-r-line"></i> Cerrar sesión</a>
-</div>
-
+    <h2>ZGestión PRO</h2>
+    <div class="section">
+      <div class="section-title">Inventario</div>
+      <a onclick="mostrarSeccion('inventario')"><i class="ri-archive-line"></i> Ver Todos</a>
+      <a onclick="mostrarSeccion('entrada')"><i class="ri-upload-2-line"></i> Entrada de productos</a>
+    </div>
+    <div class="section">
+      <div class="section-title">Ventas</div>
+      <a onclick="mostrarSeccion('clientes')"><i class="ri-user-3-line"></i> Clientes</a>
+    </div>
   </div>  <div class="main">
     <header>
       <button onclick="toggleSidebar()" style="background:none;border:none;color:white;font-size:24px;">☰</button>
-      <h1>Inventario</h1>
-    </header><!-- ... (todo tu contenido actual de productos, formulario, tabla, gráfica) ... -->
+      <h1>Panel de Control</h1>
+    </header><!-- SECCIÓN INVENTARIO -->
+<div id="inventario" class="seccion activo">
+  <h2>Inventario</h2>
+  <input type="text" placeholder="Buscar producto...">
+  <table>
+    <thead>
+      <tr><th>Producto</th><th>Categoría</th><th>Stock</th><th>Precio</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Arroz</td><td>Consumo</td><td>15</td><td>S/ 3.00</td></tr>
+    </tbody>
+  </table>
+</div>
 
-<p style="margin-top:20px;">(Aquí se mostrará el contenido según lo que elijas en el menú izquierdo)</p>
+<!-- SECCIÓN ENTRADA -->
+<div id="entrada" class="seccion">
+  <h2>Entrada de Productos</h2>
+  <input type="text" placeholder="Producto">
+  <input type="number" placeholder="Cantidad">
+  <input type="date">
+  <button>Guardar entrada</button>
+</div>
+
+<!-- SECCIÓN CLIENTES -->
+<div id="clientes" class="seccion">
+  <h2>Clientes</h2>
+  <input type="text" placeholder="Nombre">
+  <input type="text" placeholder="DNI o RUC">
+  <input type="text" placeholder="Dirección">
+  <button>Registrar cliente</button>
+  <table>
+    <thead>
+      <tr><th>Nombre</th><th>Documento</th><th>Dirección</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Juan Pérez</td><td>12345678</td><td>Lima</td></tr>
+    </tbody>
+  </table>
+</div>
 
   </div>  <script>
     function toggleSidebar() {
       const sidebar = document.querySelector('.sidebar');
       sidebar.style.display = (sidebar.style.display === 'none') ? 'flex' : 'none';
     }
-    function cerrarSesion() {
-      localStorage.removeItem("sesionActiva");
-      window.location.href = "login.html";
-    }
-    function generarPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.text("Reporte de Inventario", 10, 10);
-      doc.save("reporte_inventario.pdf");
+    function mostrarSeccion(id) {
+      document.querySelectorAll('.seccion').forEach(seccion => seccion.classList.remove('activo'));
+      document.getElementById(id).classList.add('activo');
     }
   </script></body>
 </html>
