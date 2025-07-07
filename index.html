@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Sistema de control</title>
+  <title>Inventario Max</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -99,6 +99,12 @@
       text-align: center;
     }
 
+    .acciones button {
+      margin: 0 2px;
+      padding: 5px;
+      font-size: 0.9em;
+    }
+
     footer {
       text-align: center;
       padding: 15px;
@@ -144,6 +150,7 @@
           <th>Proveedor</th>
           <th>Stock</th>
           <th>Precio</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -151,7 +158,7 @@
   </main>
 
   <footer>
-    <p>Inventario Max – Sistema básico v2.1</p>
+    <p>Inventario Max – Sistema básico v2.2</p>
   </footer>
 
   <script>
@@ -193,6 +200,10 @@
           <td>${prod.proveedor}</td>
           <td>${prod.stock}</td>
           <td>${prod.precio}</td>
+          <td class="acciones">
+            <button onclick="editarProducto(${index})">📝 Editar</button>
+            <button onclick="eliminarProducto(${index})">❌ Eliminar</button>
+          </td>
         `;
         tbody.appendChild(fila);
       });
@@ -210,3 +221,110 @@
 
       if (tipo === 'nuevo') {
         inventario.push({ codigo, nombre, categoria, proveedor, stock: cantidad, precio });
+      } else {
+        let producto = inventario.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+        if (!producto) {
+          alert("Producto no encontrado.");
+          return;
+        }
+        if (tipo === 'entrada') {
+          producto.stock += cantidad;
+        } else if (tipo === 'salida') {
+          producto.stock -= cantidad;
+          if (producto.stock < 0) producto.stock = 0;
+        }
+      }
+
+      guardarInventario();
+      renderInventario();
+    }
+
+    function editarProducto(index) {
+      let producto = inventario[index];
+      let nuevoNombre = prompt("Nuevo nombre:", producto.nombre);
+      let nuevoCodigo = prompt("Nuevo código:", producto.codigo);
+      let nuevaCategoria = prompt("Nueva categoría:", producto.categoria);
+      let nuevoProveedor = prompt("Nuevo proveedor:", producto.proveedor);
+      let nuevoStock = parseInt(prompt("Nuevo stock:", producto.stock));
+      let nuevoPrecio = parseFloat(prompt("Nuevo precio:", producto.precio));
+
+      if (
+        nuevoNombre && nuevoCodigo && nuevaCategoria && nuevoProveedor &&
+        !isNaN(nuevoStock) && !isNaN(nuevoPrecio)
+      ) {
+        inventario[index] = {
+          nombre: nuevoNombre,
+          codigo: nuevoCodigo,
+          categoria: nuevaCategoria,
+          proveedor: nuevoProveedor,
+          stock: nuevoStock,
+          precio: nuevoPrecio
+        };
+        guardarInventario();
+        renderInventario();
+      } else {
+        alert("Edición cancelada o datos inválidos.");
+      }
+    }
+
+    function eliminarProducto(index) {
+      if (confirm("¿Seguro que deseas eliminar este producto?")) {
+        inventario.splice(index, 1);
+        guardarInventario();
+        renderInventario();
+      }
+    }
+
+    function filtrarInventario(valor) {
+      const tbody = document.querySelector('#tabla-inventario tbody');
+      tbody.innerHTML = '';
+      inventario
+        .filter(prod =>
+          prod.nombre.toLowerCase().includes(valor.toLowerCase()) ||
+          prod.codigo.toLowerCase().includes(valor.toLowerCase()) ||
+          prod.categoria.toLowerCase().includes(valor.toLowerCase()))
+        .forEach((prod, index) => {
+          const fila = document.createElement('tr');
+          if (prod.stock <= 5) fila.style.backgroundColor = '#400';
+          fila.innerHTML = `
+            <td>${prod.codigo}</td>
+            <td>${prod.nombre}</td>
+            <td>${prod.categoria}</td>
+            <td>${prod.proveedor}</td>
+            <td>${prod.stock}</td>
+            <td>${prod.precio}</td>
+            <td class="acciones">
+              <button onclick="editarProducto(${index})">📝 Editar</button>
+              <button onclick="eliminarProducto(${index})">❌ Eliminar</button>
+            </td>
+          `;
+          tbody.appendChild(fila);
+        });
+    }
+
+    function exportarCSV() {
+      if (inventario.length === 0) {
+        alert("No hay productos para exportar.");
+        return;
+      }
+
+      let csv = "Código,Nombre,Categoría,Proveedor,Stock,Precio\n";
+      inventario.forEach(prod => {
+        csv += `${prod.codigo},${prod.nombre},${prod.categoria},${prod.proveedor},${prod.stock},${prod.precio}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "inventario.csv";
+      a.click();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputBuscar = document.querySelector('.buscar');
+      inputBuscar.addEventListener('input', (e) => filtrarInventario(e.target.value));
+    });
+  </script>
+</body>
+</html>
