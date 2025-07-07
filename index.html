@@ -94,7 +94,7 @@
     .seccion.activa {
       display: block;
     }
-    input, button {
+    input, button, select {
       padding: 10px;
       margin: 5px 0;
       width: 100%;
@@ -121,16 +121,11 @@
     <i class="fas fa-bars"></i>
   </button>  <div class="sidebar" id="sidebar">
     <a href="#" onclick="mostrarSeccion('inventario')"><i class="fas fa-box"></i> Inventario</a>
+    <a href="#" onclick="mostrarSeccion('agregar')"><i class="fas fa-plus"></i> Agregar Producto</a>
     <a href="#" onclick="mostrarSeccion('entradas')"><i class="fas fa-plus-circle"></i> Entradas</a>
     <a href="#" onclick="mostrarSeccion('salidas')"><i class="fas fa-minus-circle"></i> Salidas</a>
-    <a href="#"><i class="fas fa-receipt"></i> Boletas</a>
-    <a href="#"><i class="fas fa-file-invoice"></i> Facturas</a>
-    <a href="#"><i class="fas fa-chart-line"></i> Reportes</a>
-    <a href="#"><i class="fas fa-chart-pie"></i> Gráficos</a>
-    <a href="#"><i class="fas fa-user"></i> Clientes</a>
-    <a href="#"><i class="fas fa-cash-register"></i> Caja</a>
-    <a href="#"><i class="fas fa-users"></i> Usuarios</a>
-    <a href="#"><i class="fas fa-cog"></i> Configuración</a>
+    <a href="#" onclick="mostrarSeccion('boletas')"><i class="fas fa-receipt"></i> Boletas</a>
+    <a href="#" onclick="mostrarSeccion('facturas')"><i class="fas fa-file-invoice"></i> Facturas</a>
     <a class="cerrar-sesion" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
   </div>  <div class="main" id="mainContent">
     <h1>ZGestión PRO</h1><div id="inventario" class="seccion activa">
@@ -151,6 +146,18 @@
   </table>
 </div>
 
+<div id="agregar" class="seccion">
+  <h2>Agregar nuevo producto</h2>
+  <input type="text" id="codigoNuevo" placeholder="Código del producto">
+  <input type="text" id="nombreNuevo" placeholder="Nombre del producto">
+  <input type="text" id="categoriaNuevo" placeholder="Categoría">
+  <input type="text" id="proveedorNuevo" placeholder="Proveedor">
+  <input type="number" id="stockNuevo" placeholder="Stock inicial">
+  <input type="number" id="precioNuevo" placeholder="Precio">
+  <button onclick="agregarProducto()">Guardar producto</button>
+  <div class="mensaje" id="mensajeAgregar"></div>
+</div>
+
 <div id="entradas" class="seccion">
   <h2>Registrar entrada de productos</h2>
   <input type="text" id="codigoEntrada" placeholder="Código del producto">
@@ -168,8 +175,25 @@
 </div>
 
 <div id="boletas" class="seccion">
-  <h2>Generar boleta de venta</h2>
-  <p>Aquí se generarán boletas simples para tus clientes.</p>
+  <h2>Boleta de venta</h2>
+  <input type="text" id="clienteBoleta" placeholder="DNI del cliente">
+  <table>
+    <thead><tr><th>Producto</th><th>Cantidad</th><th>Subtotal</th></tr></thead>
+    <tbody id="detalleBoleta"></tbody>
+  </table>
+  <p><strong>Total:</strong> S/<span id="totalBoleta">0.00</span></p>
+  <button onclick="generarBoleta()">Generar Boleta</button>
+</div>
+
+<div id="facturas" class="seccion">
+  <h2>Factura</h2>
+  <input type="text" id="clienteFactura" placeholder="RUC del cliente">
+  <table>
+    <thead><tr><th>Producto</th><th>Cantidad</th><th>Subtotal</th></tr></thead>
+    <tbody id="detalleFactura"></tbody>
+  </table>
+  <p><strong>Total:</strong> S/<span id="totalFactura">0.00</span></p>
+  <button onclick="generarFactura()">Generar Factura</button>
 </div>
 
   </div>  <script>
@@ -216,6 +240,22 @@
       });
     }
 
+    function agregarProducto() {
+      const productos = JSON.parse(localStorage.getItem('productos')) || [];
+      const nuevo = {
+        codigo: document.getElementById('codigoNuevo').value,
+        nombre: document.getElementById('nombreNuevo').value,
+        categoria: document.getElementById('categoriaNuevo').value,
+        proveedor: document.getElementById('proveedorNuevo').value,
+        stock: parseInt(document.getElementById('stockNuevo').value),
+        precio: parseFloat(document.getElementById('precioNuevo').value)
+      };
+      productos.push(nuevo);
+      localStorage.setItem('productos', JSON.stringify(productos));
+      document.getElementById('mensajeAgregar').textContent = 'Producto guardado';
+      mostrarInventario();
+    }
+
     function registrarEntrada() {
       const codigo = document.getElementById('codigoEntrada').value.trim();
       const cantidad = parseInt(document.getElementById('cantidadEntrada').value);
@@ -252,6 +292,38 @@
       } else {
         mensaje.textContent = 'Producto no encontrado';
       }
+    }
+
+    function generarBoleta() {
+      const productos = JSON.parse(localStorage.getItem('productos')) || [];
+      const detalle = document.getElementById('detalleBoleta');
+      const totalEl = document.getElementById('totalBoleta');
+      let total = 0;
+      detalle.innerHTML = '';
+      productos.forEach(p => {
+        if (p.stock > 0) {
+          const subtotal = p.precio * 1;
+          total += subtotal;
+          detalle.innerHTML += `<tr><td>${p.nombre}</td><td>1</td><td>S/${subtotal.toFixed(2)}</td></tr>`;
+        }
+      });
+      totalEl.textContent = total.toFixed(2);
+    }
+
+    function generarFactura() {
+      const productos = JSON.parse(localStorage.getItem('productos')) || [];
+      const detalle = document.getElementById('detalleFactura');
+      const totalEl = document.getElementById('totalFactura');
+      let total = 0;
+      detalle.innerHTML = '';
+      productos.forEach(p => {
+        if (p.stock > 0) {
+          const subtotal = p.precio * 1;
+          total += subtotal;
+          detalle.innerHTML += `<tr><td>${p.nombre}</td><td>1</td><td>S/${subtotal.toFixed(2)}</td></tr>`;
+        }
+      });
+      totalEl.textContent = total.toFixed(2);
     }
 
     document.getElementById('busqueda').addEventListener('input', mostrarInventario);
