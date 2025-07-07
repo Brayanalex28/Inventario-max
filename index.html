@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -105,88 +106,114 @@
       <a onclick="mostrarSeccion('factura')"><i class="ri-file-text-line"></i> Factura</a>
       <a onclick="mostrarSeccion('boleta')"><i class="ri-file-copy-line"></i> Boleta</a>
     </div>
-  </div>  <div class="main">
+    <div class="section">
+      <div class="section-title">Cuenta</div>
+      <a id="btnCerrarSesion"><i class="ri-logout-box-line"></i> Cerrar sesión</a>
+    </div>
+  </div>
+
+  <div class="main">
     <header>
       <button onclick="toggleSidebar()" style="background:none;border:none;color:white;font-size:24px;">☰</button>
       <h1>Panel de Control</h1>
-    </header><div id="inventario" class="seccion activo">
-  <h2>Inventario</h2>
-  <input type="text" id="buscar" placeholder="Buscar por nombre, código o categoría" oninput="filtrarProductos()">
-  <table>
-    <thead>
-      <tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Stock</th><th>Precio</th><th>Imagen</th><th>Acciones</th></tr>
-    </thead>
-    <tbody id="tablaProductos"></tbody>
-  </table>
-</div>
+    </header>
 
-<div id="entrada" class="seccion">
-  <h2>Registrar Producto</h2>
-  <input type="text" id="codigo" placeholder="Código">
-  <input type="text" id="nombre" placeholder="Nombre">
-  <input type="text" id="categoria" placeholder="Categoría">
-  <input type="number" id="stock" placeholder="Stock">
-  <input type="number" id="precio" placeholder="Precio">
-  <input type="file" id="imagen" accept="image/*">
-  <button onclick="guardarProducto()">Guardar</button>
-</div>
+    <div id="inventario" class="seccion activo">
+      <h2>Inventario</h2>
+      <input type="text" id="buscar" placeholder="Buscar por nombre, código o categoría" oninput="filtrarProductos()">
+      <table>
+        <thead>
+          <tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Stock</th><th>Precio</th><th>Imagen</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="tablaProductos"></tbody>
+      </table>
+    </div>
 
-<div id="salida" class="seccion">
-  <h2>Salida de Productos</h2>
-  <input type="text" id="salidaCodigo" placeholder="Código del producto">
-  <input type="number" id="salidaCantidad" placeholder="Cantidad a retirar">
-  <button onclick="registrarSalida()">Procesar salida</button>
-</div>
+    <div id="entrada" class="seccion">
+      <h2>Registrar Producto</h2>
+      <input type="text" id="codigo" placeholder="Código">
+      <input type="text" id="nombre" placeholder="Nombre">
+      <input type="text" id="categoria" placeholder="Categoría">
+      <input type="number" id="stock" placeholder="Stock">
+      <input type="number" id="precio" placeholder="Precio">
+      <input type="file" id="imagen" accept="image/*">
+      <button onclick="guardarProducto()">Guardar</button>
+    </div>
 
-<div id="notaVenta" class="seccion">
-  <h2>Nota de Venta</h2>
-  <input type="text" placeholder="Cliente">
-  <input type="text" placeholder="Producto">
-  <input type="number" placeholder="Cantidad">
-  <button>Generar nota</button>
-</div>
+    <div id="salida" class="seccion">
+      <h2>Salida de Productos</h2>
+      <input type="text" id="salidaCodigo" placeholder="Código del producto">
+      <input type="number" id="salidaCantidad" placeholder="Cantidad a retirar">
+      <button onclick="registrarSalida()">Procesar salida</button>
+    </div>
 
-<div id="factura" class="seccion">
-  <h2>Factura</h2>
-  <input type="text" placeholder="Razón Social">
-  <input type="text" placeholder="RUC">
-  <input type="text" placeholder="Dirección">
-  <input type="text" placeholder="Producto">
-  <input type="number" placeholder="Cantidad">
-  <button>Emitir factura</button>
-</div>
+    <div id="notaVenta" class="seccion">
+      <h2>Nota de Venta</h2>
+      <input type="text" placeholder="Cliente">
+      <input type="text" placeholder="Producto">
+      <input type="number" placeholder="Cantidad">
+      <button>Generar nota</button>
+    </div>
 
-<div id="boleta" class="seccion">
-  <h2>Boleta</h2>
-  <input type="text" placeholder="Cliente">
-  <input type="text" placeholder="DNI">
-  <input type="text" placeholder="Producto">
-  <input type="number" placeholder="Cantidad">
-  <button>Emitir boleta</button>
-</div>
+    <div id="factura" class="seccion">
+      <h2>Factura</h2>
+      <input type="text" placeholder="Razón Social">
+      <input type="text" placeholder="RUC">
+      <input type="text" placeholder="Dirección">
+      <input type="text" placeholder="Producto">
+      <input type="number" placeholder="Cantidad">
+      <button>Emitir factura</button>
+    </div>
 
-  </div>  <script>
+    <div id="boleta" class="seccion">
+      <h2>Boleta</h2>
+      <input type="text" placeholder="Cliente">
+      <input type="text" placeholder="DNI">
+      <input type="text" placeholder="Producto">
+      <input type="number" placeholder="Cantidad">
+      <button>Emitir boleta</button>
+    </div>
+  </div>
+
+  <script>
+    // Validar sesión activa
+    const usuario = localStorage.getItem('usuarioLogueado');
+    if (!usuario) {
+      window.location.href = 'login.html';
+    }
+
+    // Función cerrar sesión
+    document.getElementById('btnCerrarSesion').addEventListener('click', function () {
+      localStorage.removeItem('usuarioLogueado');
+      window.location.href = 'login.html';
+    });
+
     function toggleSidebar() {
       const sidebar = document.querySelector('.sidebar');
       sidebar.style.display = (sidebar.style.display === 'none') ? 'flex' : 'none';
     }
+
     function mostrarSeccion(id) {
       document.querySelectorAll('.seccion').forEach(seccion => seccion.classList.remove('activo'));
       document.getElementById(id).classList.add('activo');
       if (id === 'inventario') mostrarProductos();
     }
+
     function guardarProducto() {
-      // implementar lógica de guardado
       alert('Producto guardado (demo)');
     }
+
     function registrarSalida() {
       alert('Salida registrada (demo)');
     }
+
     function filtrarProductos() {
-      // implementar búsqueda
+      // Implementar lógica de búsqueda
     }
+
     function mostrarProductos() {
-      // mostrar productos en la tabla
+      // Mostrar productos
     }
-  </script></body>
+  </script>
+</body>
 </html>
