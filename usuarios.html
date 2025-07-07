@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Usuarios – ZGestión PRO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #1f1f1f;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: #00d1b2;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #00d1b2;
+      color: white;
+      font-weight: bold;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 10px;
+    }
+    th {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>👥 Gestión de Usuarios</h1>
+
+  <form id="formUsuario">
+    <label>Nombre de usuario:</label>
+    <input type="text" id="usuario" required>
+
+    <label>Contraseña:</label>
+    <input type="password" id="contrasena" required>
+
+    <label>Rol:</label>
+    <select id="rol" required>
+      <option value="">Seleccione un rol</option>
+      <option value="admin">Administrador</option>
+      <option value="vendedor">Vendedor</option>
+      <option value="almacenero">Almacenero</option>
+    </select>
+
+    <button type="submit">Crear usuario</button>
+  </form>
+
+  <h2>Usuarios registrados</h2>
+  <table id="tablaUsuarios">
+    <thead>
+      <tr>
+        <th>Usuario</th>
+        <th>Rol</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('formUsuario');
+    const tabla = document.getElementById('tablaUsuarios').querySelector('tbody');
+
+    function cargarUsuarios() {
+      const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+      tabla.innerHTML = '';
+      usuarios.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${user.usuario}</td><td>${user.rol}</td>`;
+        tabla.appendChild(row);
+      });
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const usuario = document.getElementById('usuario').value.trim();
+      const contrasena = document.getElementById('contrasena').value.trim();
+      const rol = document.getElementById('rol').value;
+
+      if (!usuario || !contrasena || !rol) {
+        alert('Completa todos los campos');
+        return;
+      }
+
+      const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+      const existe = usuarios.find(u => u.usuario === usuario);
+      if (existe) {
+        alert('Este usuario ya existe');
+        return;
+      }
+
+      usuarios.push({ usuario, contrasena, rol });
+      localStorage.setItem('usuarios', JSON.stringify(usuarios));
+      form.reset();
+      cargarUsuarios();
+      alert('✅ Usuario creado correctamente');
+    });
+
+    cargarUsuarios();
+  </script>
+</body>
+</html>
