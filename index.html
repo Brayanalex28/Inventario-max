@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Inventario Max</title>
+  <title>Sistema de control</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -38,7 +38,6 @@
     }
 
     button {
-      width: 100%;
       padding: 10px;
       background-color: #007bff;
       border: none;
@@ -46,6 +45,10 @@
       border-radius: 5px;
       cursor: pointer;
       font-weight: bold;
+    }
+
+    .controles button {
+      margin-right: 10px;
     }
 
     main, header, footer {
@@ -130,6 +133,7 @@
       <button onclick="mostrarFormulario('entrada')">🔼 Entrada</button>
       <button onclick="mostrarFormulario('salida')">🔽 Salida</button>
       <input type="text" class="buscar" placeholder="Buscar...">
+      <button onclick="exportarCSV()">📤 Exportar a Excel</button>
     </div>
     <table id="tabla-inventario">
       <thead>
@@ -147,7 +151,7 @@
   </main>
 
   <footer>
-    <p>Inventario Max – Sistema básico v2.0</p>
+    <p>Inventario Max – Sistema básico v2.1</p>
   </footer>
 
   <script>
@@ -206,51 +210,3 @@
 
       if (tipo === 'nuevo') {
         inventario.push({ codigo, nombre, categoria, proveedor, stock: cantidad, precio });
-      } else {
-        let producto = inventario.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
-        if (!producto) {
-          alert("Producto no encontrado.");
-          return;
-        }
-        if (tipo === 'entrada') {
-          producto.stock += cantidad;
-        } else if (tipo === 'salida') {
-          producto.stock -= cantidad;
-          if (producto.stock < 0) producto.stock = 0;
-        }
-      }
-
-      guardarInventario();
-      renderInventario();
-    }
-
-    function filtrarInventario(valor) {
-      const tbody = document.querySelector('#tabla-inventario tbody');
-      tbody.innerHTML = '';
-      inventario
-        .filter(prod =>
-          prod.nombre.toLowerCase().includes(valor.toLowerCase()) ||
-          prod.codigo.toLowerCase().includes(valor.toLowerCase()) ||
-          prod.categoria.toLowerCase().includes(valor.toLowerCase()))
-        .forEach((prod, index) => {
-          const fila = document.createElement('tr');
-          if (prod.stock <= 5) fila.style.backgroundColor = '#400';
-          fila.innerHTML = `
-            <td>${prod.codigo}</td>
-            <td>${prod.nombre}</td>
-            <td>${prod.categoria}</td>
-            <td>${prod.proveedor}</td>
-            <td>${prod.stock}</td>
-            <td>${prod.precio}</td>
-          `;
-          tbody.appendChild(fila);
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const inputBuscar = document.querySelector('.buscar');
-      inputBuscar.addEventListener('input', (e) => filtrarInventario(e.target.value));
-    });
-  </script>
-</body>
-</html>
