@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Inventario Max</title>
+  <title>Sistema de control</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -160,7 +160,6 @@
           <td contenteditable="true" onblur="actualizarCelda(${index}, 'stock', this.innerText)">${p.stock}</td>
           <td contenteditable="true" onblur="actualizarCelda(${index}, 'precio', this.innerText)">${p.precio}</td>
           <td class="acciones">
-            <button onclick="editarProducto(${index})">Editar</button>
             <button class="eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
           </td>
         `;
@@ -234,16 +233,6 @@
         guardarProductos();
         mostrarProductos();
       }
-    }
-
-    function editarProducto(index) {
-      const producto = productos[index];
-      document.getElementById("codigo").value = producto.codigo;
-      document.getElementById("nombre").value = producto.nombre;
-      document.getElementById("categoria").value = producto.categoria;
-      document.getElementById("stock").value = producto.stock;
-      document.getElementById("precio").value = producto.precio;
-      eliminarProducto(index);
     }
 
     mostrarProductos();
