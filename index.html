@@ -120,7 +120,7 @@
       <input type="text" id="nombre" placeholder="Nombre" />
       <input type="text" id="categoria" placeholder="Categoría" />
       <input type="number" id="stock" placeholder="Stock" />
-      <input type="number" id="precio" placeholder="Precio" />
+      <input type="text" id="precio" placeholder="S/ 0.00" onfocus="this.select()" />
       <button onclick="agregarProducto()">Agregar</button>
     </section>
 
@@ -162,12 +162,13 @@
           <td contenteditable="true" onblur="actualizarCelda(${index}, 'nombre', this.innerText)">${p.nombre}</td>
           <td contenteditable="true" onblur="actualizarCelda(${index}, 'categoria', this.innerText)">${p.categoria}</td>
           <td contenteditable="true"
-              class="${p.stock < 2 ? 'stock-bajo' : ''}"
+              class="${p.stock < 5 ? 'stock-bajo' : ''}"
               onblur="actualizarCelda(${index}, 'stock', this.innerText)">
               ${p.stock}
           </td>
-          <td contenteditable="true" onblur="actualizarCelda(${index}, 'precio', this.innerText)">
-              ${p.precio}
+          <td contenteditable="true"
+              onblur="actualizarCelda(${index}, 'precio', this.innerText.replace('S/', '').trim())">
+              S/ ${parseFloat(p.precio).toFixed(2)}
           </td>
           <td class="acciones">
             <button class="eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
@@ -196,7 +197,9 @@
       const nombre = document.getElementById("nombre").value.trim();
       const categoria = document.getElementById("categoria").value.trim();
       const stock = parseInt(document.getElementById("stock").value);
-      const precio = parseFloat(document.getElementById("precio").value);
+
+      let precioTexto = document.getElementById("precio").value.replace("S/", "").trim();
+      const precio = parseFloat(precioTexto);
 
       if (!codigo || !nombre || !categoria || isNaN(stock) || isNaN(precio)) {
         alert("Por favor completa todos los campos correctamente.");
