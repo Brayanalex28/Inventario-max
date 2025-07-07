@@ -7,11 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #121212;
@@ -22,27 +18,40 @@
       transition: all 0.3s ease;
     }
     .sidebar {
-      width: 220px;
+      width: 250px;
       background-color: #1e1e1e;
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 10px;
       transition: all 0.3s ease;
     }
     .sidebar h2 {
       font-size: 20px;
       color: #4CAF50;
+      margin-bottom: 10px;
+    }
+    .sidebar .section {
+      margin-bottom: 15px;
+    }
+    .sidebar .section-title {
+      font-size: 14px;
+      color: #888;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 3px;
     }
     .sidebar a {
       text-decoration: none;
       color: white;
-      padding: 10px;
+      padding: 8px;
       display: flex;
       align-items: center;
       gap: 10px;
       border-radius: 5px;
       transition: background 0.3s;
+      font-size: 15px;
     }
     .sidebar a:hover {
       background-color: #333;
@@ -91,12 +100,8 @@
       border: 1px solid #333;
       text-align: center;
     }
-    th {
-      background-color: #222;
-    }
-    .rojo {
-      color: #ff4c4c;
-    }
+    th { background-color: #222; }
+    .rojo { color: #ff4c4c; }
     img.producto-img {
       width: 50px;
       height: auto;
@@ -110,165 +115,58 @@
 </head>
 <body>
   <div class="sidebar">
-    <h2>ZGestión PRO</h2>
-    <a href="#"><i class="ri-home-4-line"></i> Inicio</a>
-    <a href="#"><i class="ri-archive-line"></i> Inventario</a>
-    <a href="#" onclick="generarPDF()"><i class="ri-file-download-line"></i> Exportar</a>
-    <a href="#" onclick="cerrarSesion()"><i class="ri-logout-box-r-line"></i> Salir</a>
-  </div>
-  <div class="main">
+    <h2>ZGestión PRO</h2><div class="section">
+  <div class="section-title">Inventario</div>
+  <a href="#"><i class="ri-archive-line"></i> Ver Todos</a>
+  <a href="#"><i class="ri-upload-2-line"></i> Entrada de productos</a>
+  <a href="#"><i class="ri-download-2-line"></i> Salida de productos</a>
+</div>
+
+<div class="section">
+  <div class="section-title">Ventas</div>
+  <a href="#"><i class="ri-user-3-line"></i> Clientes</a>
+  <a href="#"><i class="ri-file-list-3-line"></i> Notas de venta</a>
+  <a href="#"><i class="ri-file-text-line"></i> Facturas</a>
+  <a href="#"><i class="ri-receipt-line"></i> Boletas</a>
+  <a href="#"><i class="ri-truck-line"></i> Guías</a>
+</div>
+
+<div class="section">
+  <div class="section-title">Reportes</div>
+  <a href="#" onclick="generarPDF()"><i class="ri-file-download-line"></i> Reporte de stock</a>
+  <a href="#"><i class="ri-bar-chart-2-line"></i> Reporte de ventas</a>
+</div>
+
+<div class="section">
+  <div class="section-title">Configuración</div>
+  <a href="#"><i class="ri-user-settings-line"></i> Usuarios y roles</a>
+  <a href="#"><i class="ri-image-line"></i> Cambiar logo</a>
+  <a href="#"><i class="ri-edit-box-line"></i> Nombre del sistema</a>
+  <a href="#" onclick="cerrarSesion()"><i class="ri-logout-box-r-line"></i> Cerrar sesión</a>
+</div>
+
+  </div>  <div class="main">
     <header>
       <button onclick="toggleSidebar()" style="background:none;border:none;color:white;font-size:24px;">☰</button>
       <h1>Inventario</h1>
-    </header>
-    <input type="text" id="buscador" class="buscador" placeholder="Buscar productos..." oninput="buscarProducto()">
-    <div class="formulario">
-      <input type="text" id="codigo" placeholder="Código">
-      <input type="text" id="nombre" placeholder="Nombre">
-      <input type="text" id="categoria" placeholder="Categoría">
-      <input type="number" id="stock" placeholder="Stock">
-      <input type="number" id="stockMin" placeholder="Stock mínimo">
-      <input type="text" id="precio" placeholder="Precio (S/)">
-      <input type="file" id="imagen">
-      <button onclick="agregarProducto()">Agregar Producto</button>
-    </div>
-    <table id="tabla">
-      <thead>
-        <tr>
-          <th>Imagen</th>
-          <th>Código</th>
-          <th>Nombre</th>
-          <th>Categoria</th>
-          <th>Stock</th>
-          <th>Stock Mínimo</th>
-          <th>Precio</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <canvas id="graficoStock" height="200"></canvas>
-  </div>
-  <script>
-    if (localStorage.getItem("sesionActiva") !== "true") window.location.href = "login.html";
-    let productos = JSON.parse(localStorage.getItem('productos')) || [];function guardarProductos() {
-  localStorage.setItem('productos', JSON.stringify(productos));
-}
+    </header><!-- ... (todo tu contenido actual de productos, formulario, tabla, gráfica) ... -->
 
-function agregarProducto() {
-  const codigo = document.getElementById("codigo").value.trim();
-  const nombre = document.getElementById("nombre").value.trim();
-  const categoria = document.getElementById("categoria").value.trim();
-  const stock = parseInt(document.getElementById("stock").value);
-  const stockMin = parseInt(document.getElementById("stockMin").value);
-  const precio = document.getElementById("precio").value.trim();
-  const file = document.getElementById("imagen").files[0];
+<p style="margin-top:20px;">(Aquí se mostrará el contenido según lo que elijas en el menú izquierdo)</p>
 
-  if (!codigo || !nombre || !categoria || isNaN(stock) || isNaN(stockMin) || !precio) {
-    alert("Completa todos los campos."); return;
-  }
-
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      productos.push({ codigo, nombre, categoria, stock, stockMin, precio, imagen: e.target.result });
-      guardarProductos(); mostrarProductos(); limpiarCampos();
-    };
-    reader.readAsDataURL(file);
-  } else {
-    productos.push({ codigo, nombre, categoria, stock, stockMin, precio, imagen: "" });
-    guardarProductos(); mostrarProductos(); limpiarCampos();
-  }
-}
-
-function mostrarProductos(lista = productos) {
-  const tabla = document.querySelector("#tabla tbody");
-  tabla.innerHTML = "";
-  lista.forEach((p, index) => {
-    const fila = document.createElement("tr");
-    fila.innerHTML = `
-      <td><img src="${p.imagen}" class="producto-img" alt="img"></td>
-      <td>${p.codigo}</td>
-      <td>${p.nombre}</td>
-      <td>${p.categoria}</td>
-      <td class="${p.stock <= p.stockMin ? 'rojo' : ''}">${p.stock}</td>
-      <td>${p.stockMin}</td>
-      <td>S/ ${p.precio}</td>
-      <td><button onclick="eliminarProducto(${index})">Eliminar</button></td>
-    `;
-    tabla.appendChild(fila);
-  });
-  graficar();
-}
-
-function buscarProducto() {
-  const filtro = document.getElementById("buscador").value.toLowerCase();
-  const resultados = productos.filter(p =>
-    p.codigo.toLowerCase().includes(filtro) ||
-    p.nombre.toLowerCase().includes(filtro) ||
-    p.categoria.toLowerCase().includes(filtro)
-  );
-  mostrarProductos(resultados);
-}
-
-function eliminarProducto(index) {
-  if (confirm("¿Seguro que deseas eliminar este producto?")) {
-    productos.splice(index, 1);
-    guardarProductos(); mostrarProductos();
-  }
-}
-
-function limpiarCampos() {
-  document.getElementById("codigo").value = "";
-  document.getElementById("nombre").value = "";
-  document.getElementById("categoria").value = "";
-  document.getElementById("stock").value = "";
-  document.getElementById("stockMin").value = "";
-  document.getElementById("precio").value = "";
-  document.getElementById("imagen").value = "";
-}
-
-function cerrarSesion() {
-  localStorage.removeItem("sesionActiva");
-  window.location.href = "login.html";
-}
-
-function graficar() {
-  const ctx = document.getElementById('graficoStock').getContext('2d');
-  if (window.miGrafico) window.miGrafico.destroy();
-  const nombres = productos.map(p => p.nombre);
-  const stocks = productos.map(p => p.stock);
-  window.miGrafico = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: nombres,
-      datasets: [{
-        label: 'Stock de productos',
-        data: stocks,
-        backgroundColor: '#4CAF50'
-      }]
-    },
-    options: { responsive: true, plugins: { legend: { labels: { color: 'black' } } } }
-  });
-}
-
-async function generarPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.text("Reporte de Inventario", 10, 10);
-  productos.forEach((p, i) => {
-    doc.text(`${i + 1}. ${p.nombre} - ${p.categoria} - S/${p.precio} - Stock: ${p.stock}`, 10, 20 + (i * 10));
-  });
-  doc.save("reporte_inventario.pdf");
-}
-
-function toggleSidebar() {
-  const sidebar = document.querySelector('.sidebar');
-  sidebar.style.display = (sidebar.style.display === 'none') ? 'flex' : 'none';
-}
-
-mostrarProductos();
-
-  </script>
-</body>
+  </div>  <script>
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.style.display = (sidebar.style.display === 'none') ? 'flex' : 'none';
+    }
+    function cerrarSesion() {
+      localStorage.removeItem("sesionActiva");
+      window.location.href = "login.html";
+    }
+    function generarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("Reporte de Inventario", 10, 10);
+      doc.save("reporte_inventario.pdf");
+    }
+  </script></body>
 </html>
