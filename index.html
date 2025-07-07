@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Inventario Max</title>
+  <title>Inventario Brayan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -138,7 +138,7 @@
       <button onclick="mostrarFormulario('nuevo')">➕ Agregar Producto</button>
       <button onclick="mostrarFormulario('entrada')">🔼 Entrada</button>
       <button onclick="mostrarFormulario('salida')">🔽 Salida</button>
-      <input type="text" class="buscar" placeholder="Buscar...">
+      <input type="text" class="buscar" placeholder="Buscar producto..." id="inputBuscar">
       <button onclick="exportarCSV()">📤 Exportar a Excel</button>
     </div>
     <table id="tabla-inventario">
@@ -158,7 +158,7 @@
   </main>
 
   <footer>
-    <p>Inventario Max – Sistema básico v2.2</p>
+    <p>Inventario Max – Sistema básico v2.3</p>
   </footer>
 
   <script>
@@ -187,10 +187,10 @@
       localStorage.setItem('inventarioMax', JSON.stringify(inventario));
     }
 
-    function renderInventario() {
+    function renderInventario(filtrado = inventario) {
       const tbody = document.querySelector('#tabla-inventario tbody');
       tbody.innerHTML = '';
-      inventario.forEach((prod, index) => {
+      filtrado.forEach((prod, index) => {
         const fila = document.createElement('tr');
         if (prod.stock <= 5) fila.style.backgroundColor = '#400';
         fila.innerHTML = `
@@ -275,33 +275,6 @@
       }
     }
 
-    function filtrarInventario(valor) {
-      const tbody = document.querySelector('#tabla-inventario tbody');
-      tbody.innerHTML = '';
-      inventario
-        .filter(prod =>
-          prod.nombre.toLowerCase().includes(valor.toLowerCase()) ||
-          prod.codigo.toLowerCase().includes(valor.toLowerCase()) ||
-          prod.categoria.toLowerCase().includes(valor.toLowerCase()))
-        .forEach((prod, index) => {
-          const fila = document.createElement('tr');
-          if (prod.stock <= 5) fila.style.backgroundColor = '#400';
-          fila.innerHTML = `
-            <td>${prod.codigo}</td>
-            <td>${prod.nombre}</td>
-            <td>${prod.categoria}</td>
-            <td>${prod.proveedor}</td>
-            <td>${prod.stock}</td>
-            <td>${prod.precio}</td>
-            <td class="acciones">
-              <button onclick="editarProducto(${index})">📝 Editar</button>
-              <button onclick="eliminarProducto(${index})">❌ Eliminar</button>
-            </td>
-          `;
-          tbody.appendChild(fila);
-        });
-    }
-
     function exportarCSV() {
       if (inventario.length === 0) {
         alert("No hay productos para exportar.");
@@ -322,8 +295,19 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      const inputBuscar = document.querySelector('.buscar');
-      inputBuscar.addEventListener('input', (e) => filtrarInventario(e.target.value));
+      const inputBuscar = document.getElementById('inputBuscar');
+      inputBuscar.addEventListener('input', () => {
+        const valor = inputBuscar.value.toLowerCase();
+        const filtrado = inventario.filter(prod =>
+          prod.codigo.toLowerCase().includes(valor) ||
+          prod.nombre.toLowerCase().includes(valor) ||
+          prod.categoria.toLowerCase().includes(valor) ||
+          prod.proveedor.toLowerCase().includes(valor) ||
+          prod.precio.toString().includes(valor) ||
+          prod.stock.toString().includes(valor)
+        );
+        renderInventario(filtrado);
+      });
     });
   </script>
 </body>
