@@ -1,104 +1,99 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ZGestión PRO - Iniciar Sesión</title>
+  <title>Login - ZGestión PRO</title>
   <style>
     body {
       margin: 0;
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
       height: 100vh;
-      font-family: Arial, sans-serif;
     }
-    .left {
+    .imagen {
       flex: 1;
-      background: url('https://i.imgur.com/XZlEkQW.jpg') no-repeat center center/cover;
+      background: url('https://i.imgur.com/KI8eM43.jpg') no-repeat center center;
+      background-size: cover;
     }
-    .right {
+    .formulario {
       flex: 1;
-      background-color: #121212;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background-color: #000;
       color: white;
-    }
-    .form {
-      width: 300px;
-    }
-    h2 {
-      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px;
     }
     input {
-      width: 100%;
+      margin-bottom: 20px;
       padding: 10px;
-      margin: 10px 0;
+      width: 100%;
       border-radius: 5px;
       border: none;
+      font-size: 16px;
     }
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .eye {
+    .campo {
       position: relative;
     }
-    .eye i {
+    .ver {
       position: absolute;
-      top: 35px;
       right: 10px;
+      top: 12px;
       cursor: pointer;
-      color: gray;
+      color: #999;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .error {
+      color: red;
+      margin-top: -10px;
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
-  <div class="left">
-    <!-- Aquí irá tu logo o imagen -->
+  <div class="imagen">
+    <!-- Aquí va el logo si quieres -->
   </div>
-  <div class="right">
-    <div class="form">
-      <h2>Iniciar Sesión</h2>
+  <div class="formulario">
+    <h2>Iniciar Sesión</h2>
+    <div class="campo">
       <input type="text" id="usuario" placeholder="Usuario" />
-      <div class="eye">
-        <input type="password" id="password" placeholder="Contraseña" />
-        <i onclick="togglePassword()" id="eyeIcon">👁️</i>
-      </div>
-      <button onclick="login()">Ingresar</button>
     </div>
+    <div class="campo">
+      <input type="password" id="clave" placeholder="Contraseña" />
+      <span class="ver" onclick="mostrarClave()">👁️</span>
+    </div>
+    <div class="error" id="error"></div>
+    <button onclick="iniciarSesion()">Ingresar</button>
   </div>
 
   <script>
-    function togglePassword() {
-      const pwd = document.getElementById('password');
-      pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    function mostrarClave() {
+      const campo = document.getElementById("clave");
+      campo.type = campo.type === "password" ? "text" : "password";
     }
 
-    function login() {
-      const usuario = document.getElementById('usuario').value;
-      const password = document.getElementById('password').value;
-      const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    function iniciarSesion() {
+      const usuario = document.getElementById("usuario").value;
+      const clave = document.getElementById("clave").value;
+      const error = document.getElementById("error");
 
-      const usuarioValido = usuarios.find(u => u.usuario === usuario && u.password === password);
-
-      if (usuarioValido) {
-        localStorage.setItem('sesionActiva', JSON.stringify(usuarioValido));
-        window.location.href = 'index.html';
+      // Puedes cambiar estos datos por los que desees
+      if (usuario === "admin" && clave === "1234") {
+        localStorage.setItem("sesionActiva", JSON.stringify({ usuario }));
+        window.location.href = "index.html"; // tu sistema principal
       } else {
-        alert('Credenciales inválidas');
+        error.textContent = "Usuario o contraseña incorrectos";
       }
-    }
-
-    // Crear usuario administrador por defecto
-    if (!localStorage.getItem('usuarios')) {
-      const admin = [{ usuario: 'admin', password: '1234', rol: 'admin' }];
-      localStorage.setItem('usuarios', JSON.stringify(admin));
     }
   </script>
 </body>
