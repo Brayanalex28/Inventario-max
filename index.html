@@ -4,106 +4,105 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZGestión PRO - Inventario</title>
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #121212;
-  color: white;
-  display: flex;
-  height: 100vh;
-}
-
-.sidebar {
-  width: 220px;
-  background-color: #1e1e1e;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.sidebar h2 {
-  font-size: 20px;
-  color: #4CAF50;
-}
-
-.sidebar a {
-  text-decoration: none;
-  color: white;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-radius: 5px;
-  transition: background 0.3s;
-}
-
-.sidebar a:hover {
-  background-color: #333;
-}
-
-.main {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.buscador {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  margin-bottom: 10px;
-}
-
-.formulario input {
-  width: 100%;
-  margin: 5px 0;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-}
-
-.formulario button {
-  padding: 10px 15px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  margin-top: 10px;
-}
-
-table {
-  width: 100%;
-  margin-top: 20px;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 10px;
-  border: 1px solid #333;
-  text-align: center;
-}
-
-th {
-  background-color: #222;
-}
-
-.rojo {
-  color: #ff4c4c;
-}
-
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: white;
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #1e1e1e;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .sidebar h2 {
+      font-size: 20px;
+      color: #4CAF50;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: white;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+    .sidebar a:hover {
+      background-color: #333;
+    }
+    .main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .buscador {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 10px;
+    }
+    .formulario input, .formulario button {
+      width: 100%;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    .formulario input[type="file"] {
+      color: white;
+    }
+    .formulario button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #333;
+      text-align: center;
+    }
+    th {
+      background-color: #222;
+    }
+    .rojo {
+      color: #ff4c4c;
+    }
+    img.producto-img {
+      width: 50px;
+      height: auto;
+    }
+    canvas {
+      background-color: white;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -111,120 +110,154 @@ th {
     <h2>ZGestión PRO</h2>
     <a href="#"><i class="ri-home-4-line"></i> Inicio</a>
     <a href="#"><i class="ri-archive-line"></i> Inventario</a>
-    <a href="#"><i class="ri-bar-chart-2-line"></i> Reportes</a>
+    <a href="#" onclick="generarPDF()"><i class="ri-file-download-line"></i> Exportar</a>
     <a href="#" onclick="cerrarSesion()"><i class="ri-logout-box-r-line"></i> Salir</a>
   </div>
   <div class="main">
-    <header>
-      <h1>Inventario</h1>
-    </header><input type="text" id="buscador" class="buscador" placeholder="Buscar productos..." oninput="buscarProducto()">
+    <header><h1>Inventario</h1></header>
+    <input type="text" id="buscador" class="buscador" placeholder="Buscar productos..." oninput="buscarProducto()">
+    <div class="formulario">
+      <input type="text" id="codigo" placeholder="Código">
+      <input type="text" id="nombre" placeholder="Nombre">
+      <input type="text" id="categoria" placeholder="Categoría">
+      <input type="number" id="stock" placeholder="Stock">
+      <input type="number" id="stockMin" placeholder="Stock mínimo">
+      <input type="text" id="precio" placeholder="Precio (S/)">
+      <input type="file" id="imagen">
+      <button onclick="agregarProducto()">Agregar Producto</button>
+    </div>
+    <table id="tabla">
+      <thead>
+        <tr>
+          <th>Imagen</th>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Categoria</th>
+          <th>Stock</th>
+          <th>Stock Mínimo</th>
+          <th>Precio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <canvas id="graficoStock" height="200"></canvas>
+  </div>
+  <script>
+    if (localStorage.getItem("sesionActiva") !== "true") window.location.href = "login.html";
+    let productos = JSON.parse(localStorage.getItem('productos')) || [];function guardarProductos() {
+  localStorage.setItem('productos', JSON.stringify(productos));
+}
 
-<div class="formulario">
-  <input type="text" id="codigo" placeholder="Código">
-  <input type="text" id="nombre" placeholder="Nombre">
-  <input type="text" id="categoria" placeholder="Categoría">
-  <input type="number" id="stock" placeholder="Stock">
-  <input type="number" id="stockMin" placeholder="Stock mínimo">
-  <input type="text" id="precio" placeholder="Precio (S/)">
-  <button onclick="agregarProducto()">Agregar Producto</button>
-</div>
+function agregarProducto() {
+  const codigo = document.getElementById("codigo").value.trim();
+  const nombre = document.getElementById("nombre").value.trim();
+  const categoria = document.getElementById("categoria").value.trim();
+  const stock = parseInt(document.getElementById("stock").value);
+  const stockMin = parseInt(document.getElementById("stockMin").value);
+  const precio = document.getElementById("precio").value.trim();
+  const file = document.getElementById("imagen").files[0];
 
-<table id="tabla">
-  <thead>
-    <tr>
-      <th>Código</th>
-      <th>Nombre</th>
-      <th>Categoria</th>
-      <th>Stock</th>
-      <th>Stock Mínimo</th>
-      <th>Precio</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+  if (!codigo || !nombre || !categoria || isNaN(stock) || isNaN(stockMin) || !precio) {
+    alert("Completa todos los campos."); return;
+  }
 
-  </div>  <script>
-    if (localStorage.getItem("sesionActiva") !== "true") {
-      window.location.href = "login.html";
-    }
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      productos.push({ codigo, nombre, categoria, stock, stockMin, precio, imagen: e.target.result });
+      guardarProductos(); mostrarProductos(); limpiarCampos();
+    };
+    reader.readAsDataURL(file);
+  } else {
+    productos.push({ codigo, nombre, categoria, stock, stockMin, precio, imagen: "" });
+    guardarProductos(); mostrarProductos(); limpiarCampos();
+  }
+}
 
-    let productos = JSON.parse(localStorage.getItem('productos')) || [];
+function mostrarProductos(lista = productos) {
+  const tabla = document.querySelector("#tabla tbody");
+  tabla.innerHTML = "";
+  lista.forEach((p, index) => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td><img src="${p.imagen}" class="producto-img" alt="img"></td>
+      <td>${p.codigo}</td>
+      <td>${p.nombre}</td>
+      <td>${p.categoria}</td>
+      <td class="${p.stock <= p.stockMin ? 'rojo' : ''}">${p.stock}</td>
+      <td>${p.stockMin}</td>
+      <td>S/ ${p.precio}</td>
+      <td><button onclick="eliminarProducto(${index})">Eliminar</button></td>
+    `;
+    tabla.appendChild(fila);
+  });
+  graficar();
+}
 
-    function guardarProductos() {
-      localStorage.setItem('productos', JSON.stringify(productos));
-    }
+function buscarProducto() {
+  const filtro = document.getElementById("buscador").value.toLowerCase();
+  const resultados = productos.filter(p =>
+    p.codigo.toLowerCase().includes(filtro) ||
+    p.nombre.toLowerCase().includes(filtro) ||
+    p.categoria.toLowerCase().includes(filtro)
+  );
+  mostrarProductos(resultados);
+}
 
-    function agregarProducto() {
-      const codigo = document.getElementById("codigo").value.trim();
-      const nombre = document.getElementById("nombre").value.trim();
-      const categoria = document.getElementById("categoria").value.trim();
-      const stock = parseInt(document.getElementById("stock").value);
-      const stockMin = parseInt(document.getElementById("stockMin").value);
-      const precio = document.getElementById("precio").value.trim();
+function eliminarProducto(index) {
+  if (confirm("¿Seguro que deseas eliminar este producto?")) {
+    productos.splice(index, 1);
+    guardarProductos(); mostrarProductos();
+  }
+}
 
-      if (!codigo || !nombre || !categoria || isNaN(stock) || isNaN(stockMin) || !precio) {
-        alert("Completa todos los campos.");
-        return;
-      }
+function limpiarCampos() {
+  document.getElementById("codigo").value = "";
+  document.getElementById("nombre").value = "";
+  document.getElementById("categoria").value = "";
+  document.getElementById("stock").value = "";
+  document.getElementById("stockMin").value = "";
+  document.getElementById("precio").value = "";
+  document.getElementById("imagen").value = "";
+}
 
-      productos.push({ codigo, nombre, categoria, stock, stockMin, precio });
-      guardarProductos();
-      mostrarProductos();
-      limpiarCampos();
-    }
+function cerrarSesion() {
+  localStorage.removeItem("sesionActiva");
+  window.location.href = "login.html";
+}
 
-    function mostrarProductos(lista = productos) {
-      const tabla = document.querySelector("#tabla tbody");
-      tabla.innerHTML = "";
+function graficar() {
+  const ctx = document.getElementById('graficoStock').getContext('2d');
+  if (window.miGrafico) window.miGrafico.destroy();
+  const nombres = productos.map(p => p.nombre);
+  const stocks = productos.map(p => p.stock);
+  window.miGrafico = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: nombres,
+      datasets: [{
+        label: 'Stock de productos',
+        data: stocks,
+        backgroundColor: '#4CAF50'
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { labels: { color: 'black' } } } }
+  });
+}
 
-      lista.forEach((p, index) => {
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
-          <td>${p.codigo}</td>
-          <td>${p.nombre}</td>
-          <td>${p.categoria}</td>
-          <td class="${p.stock <= p.stockMin ? 'rojo' : ''}">${p.stock}</td>
-          <td>${p.stockMin}</td>
-          <td>S/ ${p.precio}</td>
-          <td><button onclick="eliminarProducto(${index})">Eliminar</button></td>
-        `;
-        tabla.appendChild(fila);
-      });
-    }
+async function generarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.text("Reporte de Inventario", 10, 10);
+  productos.forEach((p, i) => {
+    doc.text(`${i + 1}. ${p.nombre} - ${p.categoria} - S/${p.precio} - Stock: ${p.stock}`, 10, 20 + (i * 10));
+  });
+  doc.save("reporte_inventario.pdf");
+}
 
-    function buscarProducto() {
-      const filtro = document.getElementById("buscador").value.toLowerCase();
-      const resultados = productos.filter(p =>
-        p.codigo.toLowerCase().includes(filtro) ||
-        p.nombre.toLowerCase().includes(filtro) ||
-        p.categoria.toLowerCase().includes(filtro)
-      );
-      mostrarProductos(resultados);
-    }
+mostrarProductos();
 
-    function eliminarProducto(index) {
-      if (confirm("¿Seguro que deseas eliminar este producto?")) {
-        productos.splice(index, 1);
-        guardarProductos();
-        mostrarProductos();
-      }
-    }
-
-    function limpiarCampos() {
-      document.getElementById("codigo").value = "";
-      document.getElementById("nombre").value = "";
-      document.getElementById("categoria").value = "";
-      document.getElementById("stock").value = "";
-      document.getElementById("stockMin").value = "";
-      document.getElementById("precio").value = "";
-    }
-
-    function cerrarSesion() {
-      localStorage.removeItem("sesionActiva");
-      window.location.href = "login.html";
-    }
-
-    mostrarProductos();
-  </script></body>
+  </script>
+</body>
 </html>
