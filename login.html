@@ -129,18 +129,19 @@
     }
 
     function iniciarSesion() {
-      const usuario = document.getElementById("usuario").value;
-      const clave = document.getElementById("clave").value;
-      const mensaje = document.getElementById("mensajeError");
+  const usuario = document.getElementById("usuario").value;
+  const clave = document.getElementById("clave").value;
+  const mensaje = document.getElementById("mensajeError");
 
-      if (usuario === "admin" && clave === "1234") {
-        window.location.href = "index.html";
-      } else {
-        mensaje.textContent = "Usuario o contraseña incorrectos.";
-      }
+  if (usuario === "admin" && clave === "1234") {
+    localStorage.setItem("sesionActiva", "true"); // Guarda que la sesión está activa
+    window.location.href = "index.html";
+  } else {
+    mensaje.textContent = "Usuario o contraseña incorrectos.";
+  }
 
-      return false; // evita que el formulario se recargue
-    }
+  return false;
+}
   </script>
 
 </body>
