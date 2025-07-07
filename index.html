@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -106,87 +105,171 @@
       <a onclick="mostrarSeccion('factura')"><i class="ri-file-text-line"></i> Factura</a>
       <a onclick="mostrarSeccion('boleta')"><i class="ri-file-copy-line"></i> Boleta</a>
     </div>
-    <div class="section">
-      <div class="section-title">Cuenta</div>
-      <a id="btnCerrarSesion"><i class="ri-logout-box-line"></i> Cerrar sesión</a>
-    </div>
-  </div>
-
-  <div class="main">
+  </div>  <div class="main">
     <header>
       <button onclick="toggleSidebar()" style="background:none;border:none;color:white;font-size:24px;">☰</button>
       <h1>Panel de Control</h1>
-    </header>
+    </header><div id="inventario" class="seccion activo">
+  <h2>Inventario</h2>
+  <input type="text" id="buscar" placeholder="Buscar por nombre, código o categoría" oninput="filtrarProductos()">
+  <table>
+    <thead>
+      <tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Stock</th><th>Precio</th><th>Imagen</th><th>Acciones</th></tr>
+    </thead>
+    <tbody id="tablaProductos"></tbody>
+  </table>
+</div>
 
-    <div id="inventario" class="seccion activo">
-      <h2>Inventario</h2>
-      <input type="text" id="buscar" placeholder="Buscar por nombre, código o categoría" oninput="filtrarProductos()">
-      <table>
-        <thead>
-          <tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Stock</th><th>Precio</th><th>Imagen</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="tablaProductos"></tbody>
-      </table>
-    </div>
+<div id="entrada" class="seccion">
+  <h2>Registrar Producto</h2>
+  <input type="text" id="codigo" placeholder="Código">
+  <input type="text" id="nombre" placeholder="Nombre">
+  <input type="text" id="categoria" placeholder="Categoría">
+  <input type="number" id="stock" placeholder="Stock">
+  <input type="number" id="precio" placeholder="Precio">
+  <input type="file" id="imagen" accept="image/*">
+  <button onclick="guardarProducto()">Guardar</button>
+</div>
 
-    <div id="entrada" class="seccion">
-      <h2>Registrar Producto</h2>
-      <input type="text" id="codigo" placeholder="Código">
-      <input type="text" id="nombre" placeholder="Nombre">
-      <input type="text" id="categoria" placeholder="Categoría">
-      <input type="number" id="stock" placeholder="Stock">
-      <input type="number" id="precio" placeholder="Precio">
-      <input type="file" id="imagen" accept="image/*">
-      <button onclick="guardarProducto()">Guardar</button>
-    </div>
+<div id="salida" class="seccion">
+  <h2>Salida de Productos</h2>
+  <input type="text" id="salidaCodigo" placeholder="Código del producto">
+  <input type="number" id="salidaCantidad" placeholder="Cantidad a retirar">
+  <button onclick="registrarSalida()">Procesar salida</button>
+</div>
 
-    <div id="salida" class="seccion">
-      <h2>Salida de Productos</h2>
-      <input type="text" id="salidaCodigo" placeholder="Código del producto">
-      <input type="number" id="salidaCantidad" placeholder="Cantidad a retirar">
-      <button onclick="registrarSalida()">Procesar salida</button>
-    </div>
+<div id="notaVenta" class="seccion">
+  <h2>Nota de Venta</h2>
+  <input type="text" placeholder="Cliente">
+  <input type="text" placeholder="Producto">
+  <input type="number" placeholder="Cantidad">
+  <button>Generar nota</button>
+</div>
 
-    <div id="notaVenta" class="seccion">
-      <h2>Nota de Venta</h2>
-      <input type="text" placeholder="Cliente">
-      <input type="text" placeholder="Producto">
-      <input type="number" placeholder="Cantidad">
-      <button>Generar nota</button>
-    </div>
+<div id="factura" class="seccion">
+  <h2>Factura</h2>
+  <input type="text" id="ruc" placeholder="RUC">
+  <button onclick="buscarClienteRUC()">Buscar</button>
+  <input type="text" id="razonSocial" placeholder="Razón Social">
+  <input type="text" id="direccion" placeholder="Dirección">
+  <input type="text" id="productoFactura" placeholder="Producto">
+  <input type="number" id="cantidadFactura" placeholder="Cantidad">
+  <input type="number" id="totalFactura" placeholder="Total">
+  <button onclick="emitirFactura()">Emitir factura</button>
 
-    <div id="factura" class="seccion">
-      <h2>Factura</h2>
-      <input type="text" placeholder="Razón Social">
-      <input type="text" placeholder="RUC">
-      <input type="text" placeholder="Dirección">
-      <input type="text" placeholder="Producto">
-      <input type="number" placeholder="Cantidad">
-      <button>Emitir factura</button>
-    </div>
+  <h3>Facturas emitidas</h3>
+  <table>
+    <thead>
+      <tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Total</th><th>Eliminar</th></tr>
+    </thead>
+    <tbody id="tablaFacturas"></tbody>
+  </table>
+</div>
 
-    <div id="boleta" class="seccion">
-      <h2>Boleta</h2>
-      <input type="text" placeholder="Cliente">
-      <input type="text" placeholder="DNI">
-      <input type="text" placeholder="Producto">
-      <input type="number" placeholder="Cantidad">
-      <button>Emitir boleta</button>
-    </div>
-  </div>
+<div id="boleta" class="seccion">
+  <h2>Boleta</h2>
+  <input type="text" id="dni" placeholder="DNI">
+  <button onclick="buscarClienteDNI()">Buscar</button>
+  <input type="text" id="nombreCliente" placeholder="Cliente">
+  <input type="text" id="productoBoleta" placeholder="Producto">
+  <input type="number" id="cantidadBoleta" placeholder="Cantidad">
+  <input type="number" id="totalBoleta" placeholder="Total">
+  <button onclick="emitirBoleta()">Emitir boleta</button>
 
-  <script>
-    // Validar sesión activa
-    const usuario = localStorage.getItem('usuarioLogueado');
-    if (!usuario) {
-      window.location.href = 'login.html';
+  <h3>Boletas emitidas</h3>
+  <table>
+    <thead>
+      <tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Total</th><th>Eliminar</th></tr>
+    </thead>
+    <tbody id="tablaBoletas"></tbody>
+  </table>
+</div>
+
+  </div>  <script>
+    const baseClientes = {
+      ruc: {
+        '20601234567': 'Ferretería Central S.A.C.',
+        '20123456789': 'Soluciones Industriales EIRL',
+        '20987654321': 'Herramientas Perú SRL'
+      },
+      dni: {
+        '47586932': 'Carlos Zambrano',
+        '48122345': 'Lucía Fernández',
+        '49011223': 'Miguel Torres'
+      }
+    };
+
+    function buscarClienteRUC() {
+      const ruc = document.getElementById('ruc').value;
+      const razon = baseClientes.ruc[ruc] || 'No encontrado';
+      document.getElementById('razonSocial').value = razon;
     }
 
-    // Función cerrar sesión
-    document.getElementById('btnCerrarSesion').addEventListener('click', function () {
-      localStorage.removeItem('usuarioLogueado');
-      window.location.href = 'login.html';
-    });
+    function buscarClienteDNI() {
+      const dni = document.getElementById('dni').value;
+      const nombre = baseClientes.dni[dni] || 'No encontrado';
+      document.getElementById('nombreCliente').value = nombre;
+    }
+
+    function emitirFactura() {
+      const cliente = document.getElementById('razonSocial').value;
+      const producto = document.getElementById('productoFactura').value;
+      const cantidad = document.getElementById('cantidadFactura').value;
+      const total = document.getElementById('totalFactura').value;
+      const fecha = new Date().toLocaleString();
+
+      const registro = { fecha, cliente, producto, cantidad, total };
+      const datos = JSON.parse(localStorage.getItem('facturas') || '[]');
+      datos.push(registro);
+      localStorage.setItem('facturas', JSON.stringify(datos));
+      mostrarFacturas();
+    }
+
+    function emitirBoleta() {
+      const cliente = document.getElementById('nombreCliente').value;
+      const producto = document.getElementById('productoBoleta').value;
+      const cantidad = document.getElementById('cantidadBoleta').value;
+      const total = document.getElementById('totalBoleta').value;
+      const fecha = new Date().toLocaleString();
+
+      const registro = { fecha, cliente, producto, cantidad, total };
+      const datos = JSON.parse(localStorage.getItem('boletas') || '[]');
+      datos.push(registro);
+      localStorage.setItem('boletas', JSON.stringify(datos));
+      mostrarBoletas();
+    }
+
+    function mostrarFacturas() {
+      const datos = JSON.parse(localStorage.getItem('facturas') || '[]');
+      const tabla = document.getElementById('tablaFacturas');
+      tabla.innerHTML = '';
+      datos.forEach((f, i) => {
+        tabla.innerHTML += `<tr><td>${f.fecha}</td><td>${f.cliente}</td><td>${f.producto}</td><td>${f.cantidad}</td><td>${f.total}</td><td><button onclick="eliminarFactura(${i})">🗑️</button></td></tr>`;
+      });
+    }
+
+    function mostrarBoletas() {
+      const datos = JSON.parse(localStorage.getItem('boletas') || '[]');
+      const tabla = document.getElementById('tablaBoletas');
+      tabla.innerHTML = '';
+      datos.forEach((b, i) => {
+        tabla.innerHTML += `<tr><td>${b.fecha}</td><td>${b.cliente}</td><td>${b.producto}</td><td>${b.cantidad}</td><td>${b.total}</td><td><button onclick="eliminarBoleta(${i})">🗑️</button></td></tr>`;
+      });
+    }
+
+    function eliminarFactura(i) {
+      let datos = JSON.parse(localStorage.getItem('facturas') || '[]');
+      datos.splice(i, 1);
+      localStorage.setItem('facturas', JSON.stringify(datos));
+      mostrarFacturas();
+    }
+
+    function eliminarBoleta(i) {
+      let datos = JSON.parse(localStorage.getItem('boletas') || '[]');
+      datos.splice(i, 1);
+      localStorage.setItem('boletas', JSON.stringify(datos));
+      mostrarBoletas();
+    }
 
     function toggleSidebar() {
       const sidebar = document.querySelector('.sidebar');
@@ -197,23 +280,13 @@
       document.querySelectorAll('.seccion').forEach(seccion => seccion.classList.remove('activo'));
       document.getElementById(id).classList.add('activo');
       if (id === 'inventario') mostrarProductos();
+      if (id === 'factura') mostrarFacturas();
+      if (id === 'boleta') mostrarBoletas();
     }
 
-    function guardarProducto() {
-      alert('Producto guardado (demo)');
-    }
-
-    function registrarSalida() {
-      alert('Salida registrada (demo)');
-    }
-
-    function filtrarProductos() {
-      // Implementar lógica de búsqueda
-    }
-
-    function mostrarProductos() {
-      // Mostrar productos
-    }
-  </script>
-</body>
+    function guardarProducto() { alert('Producto guardado (demo)'); }
+    function registrarSalida() { alert('Salida registrada (demo)'); }
+    function filtrarProductos() {}
+    function mostrarProductos() {}
+  </script></body>
 </html>
