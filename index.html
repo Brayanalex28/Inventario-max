@@ -17,7 +17,9 @@
       background-color: #121212;
       color: white;
       display: flex;
+      flex-direction: row;
       height: 100vh;
+      transition: all 0.3s ease;
     }
     .sidebar {
       width: 220px;
@@ -26,6 +28,7 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
+      transition: all 0.3s ease;
     }
     .sidebar h2 {
       font-size: 20px;
@@ -114,7 +117,10 @@
     <a href="#" onclick="cerrarSesion()"><i class="ri-logout-box-r-line"></i> Salir</a>
   </div>
   <div class="main">
-    <header><h1>Inventario</h1></header>
+    <header>
+      <button onclick="toggleSidebar()" style="background:none;border:none;color:white;font-size:24px;">☰</button>
+      <h1>Inventario</h1>
+    </header>
     <input type="text" id="buscador" class="buscador" placeholder="Buscar productos..." oninput="buscarProducto()">
     <div class="formulario">
       <input type="text" id="codigo" placeholder="Código">
@@ -254,6 +260,11 @@ async function generarPDF() {
     doc.text(`${i + 1}. ${p.nombre} - ${p.categoria} - S/${p.precio} - Stock: ${p.stock}`, 10, 20 + (i * 10));
   });
   doc.save("reporte_inventario.pdf");
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  sidebar.style.display = (sidebar.style.display === 'none') ? 'flex' : 'none';
 }
 
 mostrarProductos();
