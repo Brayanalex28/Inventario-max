@@ -19,6 +19,7 @@
       padding-top: 20px;
       transition: transform 0.3s ease;
       overflow-y: auto;
+      z-index: 900;
     }
     .sidebar.hidden {
       transform: translateX(-100%);
@@ -45,13 +46,18 @@
       position: fixed;
       top: 10px;
       left: 10px;
-      background-color: #292929;
+      background-color: #333;
       border: none;
       color: white;
-      padding: 6px 10px;
+      padding: 6px;
       cursor: pointer;
-      border-radius: 5px;
+      border-radius: 50%;
       font-size: 18px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       z-index: 1000;
     }
     .main {
@@ -117,7 +123,7 @@
     <a href="#" onclick="mostrarSeccion('inventario')"><i class="fas fa-box"></i> Inventario</a>
     <a href="#" onclick="mostrarSeccion('entradas')"><i class="fas fa-plus-circle"></i> Entradas</a>
     <a href="#" onclick="mostrarSeccion('salidas')"><i class="fas fa-minus-circle"></i> Salidas</a>
-    <a href="#" onclick="mostrarSeccion('boletas')"><i class="fas fa-receipt"></i> Boletas</a>
+    <a href="#"><i class="fas fa-receipt"></i> Boletas</a>
     <a href="#"><i class="fas fa-file-invoice"></i> Facturas</a>
     <a href="#"><i class="fas fa-chart-line"></i> Reportes</a>
     <a href="#"><i class="fas fa-chart-pie"></i> Gráficos</a>
@@ -129,12 +135,14 @@
   </div>  <div class="main" id="mainContent">
     <h1>ZGestión PRO</h1><div id="inventario" class="seccion activa">
   <h2>Inventario de productos</h2>
-  <input type="text" id="busqueda" placeholder="Buscar por nombre o código...">
+  <input type="text" id="busqueda" placeholder="Buscar por nombre, código, categoría o proveedor...">
   <table>
     <thead>
       <tr>
         <th>Código</th>
         <th>Nombre</th>
+        <th>Categoría</th>
+        <th>Proveedor</th>
         <th>Stock</th>
         <th>Precio</th>
       </tr>
@@ -187,13 +195,20 @@
       tabla.innerHTML = '';
 
       const filtro = document.getElementById('busqueda').value.toLowerCase();
-      const filtrados = productos.filter(p => p.nombre.toLowerCase().includes(filtro) || p.codigo.toLowerCase().includes(filtro));
+      const filtrados = productos.filter(p =>
+        p.nombre.toLowerCase().includes(filtro) ||
+        p.codigo.toLowerCase().includes(filtro) ||
+        (p.categoria || '').toLowerCase().includes(filtro) ||
+        (p.proveedor || '').toLowerCase().includes(filtro)
+      );
 
       filtrados.forEach(prod => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
           <td>${prod.codigo}</td>
           <td>${prod.nombre}</td>
+          <td>${prod.categoria || '-'}</td>
+          <td>${prod.proveedor || '-'}</td>
           <td class="${prod.stock <= 2 ? 'stock-bajo' : ''}">${prod.stock}</td>
           <td class="precio">${prod.precio}</td>
         `;
