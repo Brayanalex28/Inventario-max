@@ -11,54 +11,91 @@
       background-color: #121212;
       color: white;
     }
+
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    main, header, footer {
+      display: none;
+    }
+
     header {
       background-color: #1f1f1f;
       padding: 10px;
       display: flex;
       align-items: center;
     }
+
     .logo {
       width: 40px;
       height: 40px;
       margin-right: 10px;
     }
+
     h1 {
       margin: 0;
       font-size: 1.5em;
     }
-    main {
-      padding: 20px;
-    }
+
     .controles {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 15px;
     }
-    button {
-      background-color: #007bff;
-      border: none;
-      padding: 10px;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    input[type="text"] {
+
+    input[type="text"].buscar {
       padding: 10px;
       border-radius: 5px;
       border: none;
       width: 200px;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
+
     th, td {
       padding: 10px;
       border: 1px solid #444;
       text-align: center;
     }
+
     footer {
       text-align: center;
       padding: 15px;
@@ -70,16 +107,29 @@
   </style>
 </head>
 <body>
+  <!-- Login -->
+  <div class="login-container" id="login-container">
+    <div class="login-box">
+      <h2>Iniciar Sesión</h2>
+      <input type="text" id="usuario" placeholder="Usuario">
+      <input type="password" id="clave" placeholder="Contraseña">
+      <button onclick="verificarLogin()">Ingresar</button>
+      <p id="error" style="color: red; text-align: center;"></p>
+    </div>
+  </div>
+
+  <!-- Sistema Inventario -->
   <header>
     <img src="img/logo.png" alt="Tu Logo Aquí" class="logo">
     <h1>Inventario Max</h1>
   </header>
+
   <main>
     <div class="controles">
       <button onclick="mostrarFormulario('nuevo')">➕ Agregar Producto</button>
       <button onclick="mostrarFormulario('entrada')">🔼 Entrada</button>
       <button onclick="mostrarFormulario('salida')">🔽 Salida</button>
-      <input type="text" placeholder="Buscar...">
+      <input type="text" class="buscar" placeholder="Buscar...">
     </div>
     <table id="tabla-inventario">
       <thead>
@@ -95,93 +145,7 @@
       <tbody></tbody>
     </table>
   </main>
+
   <footer>
-    <p>Inventario Max – Sistema básico v1.0</p>
+    <p>Inventario Max – Sistema básico v2.0</p>
   </footer>
-
-  <script>
-    let inventario = JSON.parse(localStorage.getItem('inventarioMax')) || [];
-
-    function guardarInventario() {
-      localStorage.setItem('inventarioMax', JSON.stringify(inventario));
-    }
-
-    function renderInventario() {
-      const tbody = document.querySelector('#tabla-inventario tbody');
-      tbody.innerHTML = '';
-      inventario.forEach((prod, index) => {
-        const fila = document.createElement('tr');
-        if (prod.stock <= 5) fila.style.backgroundColor = '#400';
-        fila.innerHTML = `
-          <td>${prod.codigo}</td>
-          <td>${prod.nombre}</td>
-          <td>${prod.categoria}</td>
-          <td>${prod.proveedor}</td>
-          <td>${prod.stock}</td>
-          <td>${prod.precio}</td>
-        `;
-        tbody.appendChild(fila);
-      });
-    }
-
-    function mostrarFormulario(tipo) {
-      let nombre = prompt("Nombre del producto:");
-      if (!nombre) return;
-
-      let codigo = prompt("Código:");
-      let categoria = prompt("Categoría:");
-      let proveedor = prompt("Proveedor:");
-      let cantidad = parseInt(prompt("Cantidad:"));
-      let precio = parseFloat(prompt("Precio (por unidad):"));
-
-      if (tipo === 'nuevo') {
-        inventario.push({ codigo, nombre, categoria, proveedor, stock: cantidad, precio });
-      } else {
-        let producto = inventario.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
-        if (!producto) {
-          alert("Producto no encontrado.");
-          return;
-        }
-        if (tipo === 'entrada') {
-          producto.stock += cantidad;
-        } else if (tipo === 'salida') {
-          producto.stock -= cantidad;
-          if (producto.stock < 0) producto.stock = 0;
-        }
-      }
-
-      guardarInventario();
-      renderInventario();
-    }
-
-    function filtrarInventario(valor) {
-      const tbody = document.querySelector('#tabla-inventario tbody');
-      tbody.innerHTML = '';
-      inventario
-        .filter(prod =>
-          prod.nombre.toLowerCase().includes(valor.toLowerCase()) ||
-          prod.codigo.toLowerCase().includes(valor.toLowerCase()) ||
-          prod.categoria.toLowerCase().includes(valor.toLowerCase()))
-        .forEach((prod, index) => {
-          const fila = document.createElement('tr');
-          if (prod.stock <= 5) fila.style.backgroundColor = '#400';
-          fila.innerHTML = `
-            <td>${prod.codigo}</td>
-            <td>${prod.nombre}</td>
-            <td>${prod.categoria}</td>
-            <td>${prod.proveedor}</td>
-            <td>${prod.stock}</td>
-            <td>${prod.precio}</td>
-          `;
-          tbody.appendChild(fila);
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      renderInventario();
-      const inputBuscar = document.querySelector('input[type="text"]');
-      inputBuscar.addEventListener('input', (e) => filtrarInventario(e.target.value));
-    });
-  </script>
-</body>
-</html>
