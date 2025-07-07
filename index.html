@@ -78,7 +78,7 @@
 </head>
 <body>
 
-  <!-- 🔐 PROTECCIÓN DE LOGIN -->
+  <!-- 🔐 Protege el acceso solo si hay sesión iniciada -->
   <script>
     if (localStorage.getItem("sesionActiva") !== "true") {
       window.location.href = "login.html";
@@ -134,3 +134,30 @@
       lista.forEach((p, index) => {
         const fila = document.createElement("tr");
         fila.innerHTML = `
+          <td>${p.codigo}</td>
+          <td>${p.nombre}</td>
+          <td>${p.categoria}</td>
+          <td>${p.stock}</td>
+          <td>S/. ${p.precio.toFixed(2)}</td>
+          <td class="acciones">
+            <button onclick="editarProducto(${index})">Editar</button>
+            <button class="eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
+          </td>
+        `;
+        tbody.appendChild(fila);
+      });
+    }
+
+    function agregarProducto() {
+      const codigo = document.getElementById("codigo").value.trim();
+      const nombre = document.getElementById("nombre").value.trim();
+      const categoria = document.getElementById("categoria").value.trim();
+      const stock = parseInt(document.getElementById("stock").value);
+      const precio = parseFloat(document.getElementById("precio").value);
+
+      if (!codigo || !nombre || !categoria || isNaN(stock) || isNaN(precio)) {
+        alert("Por favor completa todos los campos correctamente.");
+        return;
+      }
+
+      productos.push({ codigo, nombre, categoria, stock
