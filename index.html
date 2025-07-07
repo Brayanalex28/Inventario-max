@@ -76,6 +76,28 @@
     th {
       background-color: #222;
     }
+    .seccion {
+      display: none;
+    }
+    .seccion.activa {
+      display: block;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    .mensaje {
+      margin-top: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>  <script>
@@ -84,10 +106,10 @@
       window.location.href = 'login.html';
     }
   </script>  <!-- Sidebar -->  <div class="sidebar" id="sidebar">
-    <a href="#" onclick="mostrarInventario()">Inventario</a>
-    <a href="#">Entradas</a>
-    <a href="#">Salidas</a>
-    <a href="#">Boletas</a>
+    <a href="#" onclick="mostrarSeccion('inventario')">Inventario</a>
+    <a href="#" onclick="mostrarSeccion('entradas')">Entradas</a>
+    <a href="#" onclick="mostrarSeccion('salidas')">Salidas</a>
+    <a href="#" onclick="mostrarSeccion('boletas')">Boletas</a>
     <a href="#">Facturas</a>
     <a href="#">Reportes</a>
     <a href="#">Gráficos</a>
@@ -99,24 +121,44 @@
   </div>  <!-- Botón para ocultar sidebar --><button class="toggle-btn" onclick="toggleSidebar()">☰</button>
 
   <!-- Contenido principal -->  <div class="main" id="mainContent">
-    <h1>Bienvenido a ZGestión PRO</h1>
-    <div id="contenido-inventario">
-      <h2>Inventario de productos</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Nombre</th>
-            <th>Stock</th>
-            <th>Precio</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-productos">
-          <!-- Aquí se insertan los productos -->
-        </tbody>
-      </table>
-    </div>
-  </div>  <!-- Scripts -->  <script>
+    <h1>ZGestión PRO</h1><div id="inventario" class="seccion activa">
+  <h2>Inventario de productos</h2>
+  <input type="text" id="busqueda" placeholder="Buscar por nombre o código...">
+  <table>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Stock</th>
+        <th>Precio</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-productos"></tbody>
+  </table>
+</div>
+
+<div id="entradas" class="seccion">
+  <h2>Registrar entrada de productos</h2>
+  <input type="text" id="codigoEntrada" placeholder="Código del producto">
+  <input type="number" id="cantidadEntrada" placeholder="Cantidad a ingresar">
+  <button onclick="registrarEntrada()">Registrar Entrada</button>
+  <div class="mensaje" id="mensajeEntrada"></div>
+</div>
+
+<div id="salidas" class="seccion">
+  <h2>Registrar salida de productos</h2>
+  <input type="text" id="codigoSalida" placeholder="Código del producto">
+  <input type="number" id="cantidadSalida" placeholder="Cantidad a retirar">
+  <button onclick="registrarSalida()">Registrar Salida</button>
+  <div class="mensaje" id="mensajeSalida"></div>
+</div>
+
+<div id="boletas" class="seccion">
+  <h2>Generar boleta de venta</h2>
+  <p>Aquí se generarán boletas simples para tus clientes.</p>
+</div>
+
+  </div>  <script>
     function cerrarSesion() {
       localStorage.removeItem('sesionActiva');
       window.location.href = 'login.html';
@@ -127,12 +169,21 @@
       document.getElementById('mainContent').classList.toggle('expanded');
     }
 
+    function mostrarSeccion(id) {
+      document.querySelectorAll('.seccion').forEach(sec => sec.classList.remove('activa'));
+      document.getElementById(id).classList.add('activa');
+      if (id === 'inventario') mostrarInventario();
+    }
+
     function mostrarInventario() {
       const productos = JSON.parse(localStorage.getItem('productos')) || [];
       const tabla = document.getElementById('tabla-productos');
       tabla.innerHTML = '';
 
-      productos.forEach(prod => {
+      const filtro = document.getElementById('busqueda').value.toLowerCase();
+      const filtrados = productos.filter(p => p.nombre.toLowerCase().includes(filtro) || p.codigo.toLowerCase().includes(filtro));
+
+      filtrados.forEach(prod => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
           <td>${prod.codigo}</td>
@@ -144,6 +195,45 @@
       });
     }
 
+    function registrarEntrada() {
+      const codigo = document.getElementById('codigoEntrada').value.trim();
+      const cantidad = parseInt(document.getElementById('cantidadEntrada').value);
+      const mensaje = document.getElementById('mensajeEntrada');
+
+      let productos = JSON.parse(localStorage.getItem('productos')) || [];
+      const producto = productos.find(p => p.codigo === codigo);
+      if (producto) {
+        producto.stock += cantidad;
+        localStorage.setItem('productos', JSON.stringify(productos));
+        mensaje.textContent = 'Entrada registrada con éxito';
+        mostrarInventario();
+      } else {
+        mensaje.textContent = 'Producto no encontrado';
+      }
+    }
+
+    function registrarSalida() {
+      const codigo = document.getElementById('codigoSalida').value.trim();
+      const cantidad = parseInt(document.getElementById('cantidadSalida').value);
+      const mensaje = document.getElementById('mensajeSalida');
+
+      let productos = JSON.parse(localStorage.getItem('productos')) || [];
+      const producto = productos.find(p => p.codigo === codigo);
+      if (producto) {
+        if (producto.stock >= cantidad) {
+          producto.stock -= cantidad;
+          localStorage.setItem('productos', JSON.stringify(productos));
+          mensaje.textContent = 'Salida registrada con éxito';
+          mostrarInventario();
+        } else {
+          mensaje.textContent = 'Stock insuficiente';
+        }
+      } else {
+        mensaje.textContent = 'Producto no encontrado';
+      }
+    }
+
+    document.getElementById('busqueda').addEventListener('input', mostrarInventario);
     mostrarInventario();
   </script></body>
 </html>
