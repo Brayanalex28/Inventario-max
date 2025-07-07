@@ -75,7 +75,6 @@
       background-color: #dc3545;
     }
 
-    /* Estilo de notificación */
     #notificacion {
       display: none;
       position: fixed;
@@ -89,11 +88,15 @@
       font-weight: bold;
       z-index: 999;
     }
+
+    td[contenteditable="true"]:focus {
+      outline: 2px solid #28a745;
+      background-color: #2d2d2d;
+    }
   </style>
 </head>
 <body>
 
-  <!-- 🔐 Protección por login -->
   <script>
     if (localStorage.getItem("sesionActiva") !== "true") {
       window.location.href = "login.html";
@@ -130,16 +133,14 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Aquí se insertan los productos -->
+          <!-- Productos aquí -->
         </tbody>
       </table>
     </section>
   </main>
 
-  <!-- 🔔 Notificación -->
   <div id="notificacion">Producto agregado correctamente</div>
 
-  <!-- Scripts -->
   <script>
     let productos = JSON.parse(localStorage.getItem("productos")) || [];
 
@@ -154,10 +155,10 @@
         const fila = document.createElement("tr");
         fila.innerHTML = `
           <td>${p.codigo}</td>
-          <td>${p.nombre}</td>
-          <td>${p.categoria}</td>
-          <td>${p.stock}</td>
-          <td>S/. ${p.precio.toFixed(2)}</td>
+          <td contenteditable="true" onblur="actualizarCelda(${index}, 'nombre', this.innerText)">${p.nombre}</td>
+          <td contenteditable="true" onblur="actualizarCelda(${index}, 'categoria', this.innerText)">${p.categoria}</td>
+          <td contenteditable="true" onblur="actualizarCelda(${index}, 'stock', this.innerText)">${p.stock}</td>
+          <td contenteditable="true" onblur="actualizarCelda(${index}, 'precio', this.innerText)">${p.precio}</td>
           <td class="acciones">
             <button onclick="editarProducto(${index})">Editar</button>
             <button class="eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
@@ -165,6 +166,20 @@
         `;
         tbody.appendChild(fila);
       });
+    }
+
+    function actualizarCelda(index, campo, valor) {
+      if (campo === "stock" || campo === "precio") {
+        valor = parseFloat(valor);
+        if (isNaN(valor)) {
+          alert("Por favor ingresa un valor numérico válido.");
+          mostrarProductos();
+          return;
+        }
+      }
+      productos[index][campo] = valor;
+      guardarProductos();
+      mostrarProductos();
     }
 
     function agregarProducto() {
@@ -231,7 +246,6 @@
       eliminarProducto(index);
     }
 
-    // Mostrar al cargar
     mostrarProductos();
   </script>
 
