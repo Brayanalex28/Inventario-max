@@ -1,41 +1,48 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Inventario Max</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilo.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistema de Inventario</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <header>
-        <img src="img/logo.png" alt="Tu Logo Aquí" class="logo">
-        <h1>Inventario Max</h1>
-    </header>
-    <main>
-        <div class="controles">
-            <button onclick="mostrarFormulario('nuevo')">➕ Agregar Producto</button>
-            <button onclick="mostrarFormulario('entrada')">🔼 Entrada</button>
-            <button onclick="mostrarFormulario('salida')">🔽 Salida</button>
-            <input type="text" placeholder="Buscar...">
-        </div>
-        <table id="tabla-inventario">
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Nombre</th>
-                    <th>Categoría</th>
-                    <th>Proveedor</th>
-                    <th>Stock</th>
-                    <th>Precio</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </main>
-    <footer>
-        <p>Inventario Max – Sistema básico v1.0</p>
-    </footer>
-    <script src="script.js"></script>
+  <div class="container">
+    <h1>Inventario de Ferretería</h1>
+    <form id="product-form">
+      <input type="text" id="name" placeholder="Nombre del producto" required />
+      <input type="text" id="category" placeholder="Categoría" required />
+      <input type="text" id="provider" placeholder="Proveedor" required />
+      <input type="number" id="price" placeholder="Precio" min="0" required />
+      <input type="number" id="quantity" placeholder="Cantidad inicial" min="1" required />
+      <button type="submit">Agregar Producto</button>
+    </form>
+
+    <div class="controls">
+      <input type="text" id="search" placeholder="Buscar producto..." />
+      <button onclick="downloadCSV()">Descargar Excel</button>
+    </div>
+
+    <table id="product-table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Proveedor</th>
+          <th>Precio</th>
+          <th>Cantidad</th>
+          <th>Entradas</th>
+          <th>Salidas</th>
+          <th>Stock</th>
+          <th>Alerta</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
