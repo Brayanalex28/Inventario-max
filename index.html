@@ -78,7 +78,7 @@
 </head>
 <body>
 
-  <!-- 🔐 Protege el acceso solo si hay sesión iniciada -->
+  <!-- 🔐 Protección por sesión activa -->
   <script>
     if (localStorage.getItem("sesionActiva") !== "true") {
       window.location.href = "login.html";
@@ -115,7 +115,7 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Productos se insertan aquí -->
+          <!-- Productos cargados aquí -->
         </tbody>
       </table>
     </section>
@@ -202,7 +202,7 @@
       eliminarProducto(index);
     }
 
-    // Mostrar los productos al cargar la página
+    // Mostrar los productos al cargar
     mostrarProductos();
   </script>
 
