@@ -1,8 +1,9 @@
-<!DOCTYPE html><html lang="es"><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZGestión PRO</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
       margin: 0;
@@ -10,140 +11,52 @@
       background-color: #1f1f1f;
       color: white;
     }
-    .sidebar {
-      width: 240px;
-      height: 100vh;
-      position: fixed;
+    header {
       background-color: #111;
-      padding-top: 20px;
-      transition: transform 0.3s ease;
-      overflow-y: auto;
-      z-index: 900;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
     }
-    .sidebar.hidden {
-      transform: translateX(-100%);
-    }
-    .sidebar a {
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: white;
-      text-decoration: none;
-      border-bottom: 1px solid #333;
-      font-size: 15px;
-    }
-    .sidebar a:hover {
-      background-color: #292929;
-    }
-    .cerrar-sesion {
-      position: absolute;
-      bottom: 20px;
-      width: 100%;
-    }
-    .toggle-btn {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background-color: #333;
-      border: none;
-      color: white;
-      padding: 6px;
-      cursor: pointer;
-      border-radius: 50%;
-      font-size: 18px;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .main {
-      margin-left: 240px;
+    .contenido {
       padding: 20px;
-      transition: margin-left 0.3s ease;
-    }
-    .main.expanded {
-      margin-left: 0;
-    }
-    .stock-bajo {
-      color: red;
-      font-weight: bold;
-    }
-    .precio::before {
-      content: 'S/';
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #444;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background-color: #222;
-    }
-    .seccion {
-      display: none;
-    }
-    .seccion.activa {
-      display: block;
-    }
-    input, button, select {
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-      border-radius: 5px;
-      border: none;
     }
     button {
-      background-color: #28a745;
+      background-color: #c0392b;
       color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
-    }
-    .mensaje {
-      margin-top: 10px;
-      font-weight: bold;
     }
   </style>
 </head>
 <body>
-<script>
-  const sesion = JSON.parse(localStorage.getItem('sesionActiva'));
-  if (!sesion) {
-    window.location.href = 'login.html';
-  }
-</script><button class="toggle-btn" onclick="toggleSidebar()">
-  <i class="fas fa-bars"></i>
-</button>
-<div class="sidebar" id="sidebar">
-  <a href="#" onclick="mostrarSeccion('inventario')"><i class="fas fa-box"></i> Inventario</a>
-  <a href="#" onclick="mostrarSeccion('agregar')"><i class="fas fa-plus"></i> Agregar Producto</a>
-  <a href="#" onclick="mostrarSeccion('entradas')"><i class="fas fa-plus-circle"></i> Entradas</a>
-  <a href="#" onclick="mostrarSeccion('salidas')"><i class="fas fa-minus-circle"></i> Salidas</a>
-  <a href="#" onclick="mostrarSeccion('boletas')"><i class="fas fa-receipt"></i> Boletas</a>
-  <a href="#" onclick="mostrarSeccion('facturas')"><i class="fas fa-file-invoice"></i> Facturas</a>
-  <a class="cerrar-sesion" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
-</div><div class="main" id="mainContent">
-  <h1>ZGestión PRO</h1>
-  <!-- Aquí sigue todo tu contenido HTML existente (secciones, formularios, tablas) -->
-</div><script>
-  function cerrarSesion() {
-    localStorage.removeItem('sesionActiva');
-    window.location.href = 'login.html';
-  }
-  function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('hidden');
-    document.getElementById('mainContent').classList.toggle('expanded');
-  }
-  function mostrarSeccion(id) {
-    document.querySelectorAll('.seccion').forEach(sec => sec.classList.remove('activa'));
-    document.getElementById(id).classList.add('activa');
-    if (id === 'inventario') mostrarInventario();
-  }
-</script><!-- Aquí continúa tu script actual --></body>
+  <!-- 🔐 Verificación de sesión -->
+  <script>
+    const sesion = JSON.parse(localStorage.getItem("sesionActiva"));
+    if (!sesion) {
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <header>ZGestión PRO - Bienvenido, <span id="usuarioActivo"></span></header>
+
+  <div class="contenido">
+    <p>Este es el panel principal del sistema.</p>
+    <p>Aquí irán tus funciones de inventario, ventas, etc.</p>
+    <button onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
+
+  <script>
+    const usuario = JSON.parse(localStorage.getItem("sesionActiva"));
+    if (usuario) {
+      document.getElementById("usuarioActivo").textContent = usuario.usuario;
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem("sesionActiva");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
 </html>
