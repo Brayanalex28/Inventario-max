@@ -1,281 +1,149 @@
 <!DOCTYPE html><html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZGestión PRO - Sistema de Ventas y Almacén</title>
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZGestión PRO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #fff;
-      display: flex;
-      height: 100vh;
+      background-color: #1c1c1c;
+      color: white;
     }
     .sidebar {
-      width: 250px;
-      background-color: #1f1f1f;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
+      width: 220px;
+      height: 100vh;
+      position: fixed;
+      background-color: #111;
+      padding-top: 20px;
+      transition: transform 0.3s ease;
     }
-    .sidebar h2 { color: #4caf50; margin-bottom: 15px; }
-    .sidebar .section-title {
-      font-size: 14px;
-      color: #bbb;
-      margin-top: 20px;
-      margin-bottom: 5px;
+    .sidebar.hidden {
+      transform: translateX(-100%);
     }
     .sidebar a {
-      text-decoration: none;
-      color: #fff;
-      margin: 5px 0;
-      padding: 10px;
-      border-radius: 5px;
+      padding: 10px 20px;
       display: block;
-      transition: background-color 0.2s;
+      color: white;
+      text-decoration: none;
     }
-    .sidebar a:hover { background-color: #333; }
+    .sidebar a:hover {
+      background-color: #575757;
+    }
     .main {
-      flex: 1;
+      margin-left: 220px;
       padding: 20px;
-      overflow-y: auto;
+      transition: margin-left 0.3s ease;
     }
-    .seccion { display: none; }
-    .activo { display: block; }
-    input, select, button {
-      padding: 10px;
-      margin: 5px 0;
+    .main.expanded {
+      margin-left: 0;
+    }
+    .stock-bajo {
+      color: red;
+      font-weight: bold;
+    }
+    .precio::before {
+      content: 'S/';
+    }
+    .cerrar-sesion {
+      position: absolute;
+      bottom: 20px;
       width: 100%;
-      border-radius: 5px;
-      border: none;
     }
-    button { background-color: #4caf50; color: white; cursor: pointer; }
+    .toggle-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #444;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      z-index: 1000;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
     }
     th, td {
+      border: 1px solid #555;
       padding: 10px;
-      border: 1px solid #333;
-      text-align: center;
+      text-align: left;
     }
-    th { background-color: #222; }
-    .rojo { color: red; }
+    th {
+      background-color: #222;
+    }
   </style>
 </head>
-<body>
-  <div class="sidebar">
-    <h2>ZGestión PRO</h2>
-    <div class="section-title">Inventario</div>
-    <a onclick="mostrar('inventario')">Inventario</a>
-    <a onclick="mostrar('entrada')">Entrada</a>
-    <a onclick="mostrar('salida')">Salida</a><div class="section-title">Ventas</div>
-<a onclick="mostrar('notaVenta')">Nota de Venta</a>
-<a onclick="mostrar('factura')">Factura</a>
-<a onclick="mostrar('boleta')">Boleta</a>
+<body>  <script>
+    const sesion = JSON.parse(localStorage.getItem('sesionActiva'));
+    if (!sesion) {
+      window.location.href = 'login.html';
+    }
+  </script>  <!-- Sidebar -->  <div class="sidebar" id="sidebar">
+    <a href="#" onclick="mostrarInventario()">Inventario</a>
+    <a href="#">Entradas</a>
+    <a href="#">Salidas</a>
+    <a href="#">Boletas</a>
+    <a href="#">Facturas</a>
+    <a href="#">Reportes</a>
+    <a href="#">Gráficos</a>
+    <a href="#">Clientes</a>
+    <a href="#">Caja</a>
+    <a href="#">Usuarios</a>
+    <a href="#">Configuración</a>
+    <a class="cerrar-sesion" onclick="cerrarSesion()">Cerrar sesión</a>
+  </div>  <!-- Botón para ocultar sidebar --><button class="toggle-btn" onclick="toggleSidebar()">☰</button>
 
-  </div>
-  <div class="main">
-    <div id="inventario" class="seccion activo">
-      <h2>Inventario</h2>
-      <input type="text" id="nombre" placeholder="Nombre">
-      <input type="text" id="categoria" placeholder="Categoría">
-      <input type="number" id="stock" placeholder="Stock">
-      <input type="text" id="precio" placeholder="Precio">
-      <button onclick="agregarProducto()">Agregar Producto</button>
+  <!-- Contenido principal -->  <div class="main" id="mainContent">
+    <h1>Bienvenido a ZGestión PRO</h1>
+    <div id="contenido-inventario">
+      <h2>Inventario de productos</h2>
       <table>
         <thead>
-          <tr><th>Nombre</th><th>Categoría</th><th>Stock</th><th>Precio</th><th>Acciones</th></tr>
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Stock</th>
+            <th>Precio</th>
+          </tr>
         </thead>
-        <tbody id="tablaInventario"></tbody>
+        <tbody id="tabla-productos">
+          <!-- Aquí se insertan los productos -->
+        </tbody>
       </table>
-    </div><div id="entrada" class="seccion">
-  <h2>Entrada de Productos</h2>
-  <input type="text" id="entradaNombre" placeholder="Nombre">
-  <input type="number" id="entradaCantidad" placeholder="Cantidad">
-  <button onclick="registrarEntrada()">Registrar Entrada</button>
-</div>
-
-<div id="salida" class="seccion">
-  <h2>Salida de Productos</h2>
-  <input type="text" id="salidaNombre" placeholder="Nombre">
-  <input type="number" id="salidaCantidad" placeholder="Cantidad">
-  <button onclick="registrarSalida()">Registrar Salida</button>
-</div>
-
-<div id="notaVenta" class="seccion">
-  <h2>Nota de Venta</h2>
-  <input type="text" id="clienteNota" placeholder="Cliente">
-  <input type="text" id="productoNota" placeholder="Producto">
-  <input type="number" id="cantidadNota" placeholder="Cantidad">
-  <input type="text" id="totalNota" placeholder="Total">
-  <button onclick="emitirNotaVenta()">Emitir</button>
-</div>
-
-<div id="factura" class="seccion">
-  <h2>Factura</h2>
-  <input type="text" id="razonSocial" placeholder="Razón Social o RUC">
-  <input type="text" id="productoFactura" placeholder="Producto">
-  <input type="number" id="cantidadFactura" placeholder="Cantidad">
-  <input type="text" id="totalFactura" placeholder="Total">
-  <button onclick="emitirFactura()">Emitir</button>
-  <table>
-    <thead><tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Total</th><th>Eliminar</th></tr></thead>
-    <tbody id="tablaFacturas"></tbody>
-  </table>
-</div>
-
-<div id="boleta" class="seccion">
-  <h2>Boleta</h2>
-  <input type="text" id="nombreCliente" placeholder="DNI o Nombre">
-  <input type="text" id="productoBoleta" placeholder="Producto">
-  <input type="number" id="cantidadBoleta" placeholder="Cantidad">
-  <input type="text" id="totalBoleta" placeholder="Total">
-  <button onclick="emitirBoleta()">Emitir</button>
-  <table>
-    <thead><tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Total</th><th>Eliminar</th></tr></thead>
-    <tbody id="tablaBoletas"></tbody>
-  </table>
-</div>
-
-  </div>  <script>
-    function mostrar(seccion) {
-      document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activo'));
-      document.getElementById(seccion).classList.add('activo');
+    </div>
+  </div>  <!-- Scripts -->  <script>
+    function cerrarSesion() {
+      localStorage.removeItem('sesionActiva');
+      window.location.href = 'login.html';
     }
 
-    function agregarProducto() {
-      const nombre = document.getElementById('nombre').value;
-      const categoria = document.getElementById('categoria').value;
-      const stock = parseInt(document.getElementById('stock').value);
-      const precio = document.getElementById('precio').value;
-      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-      productos.push({ nombre, categoria, stock, precio });
-      localStorage.setItem('productos', JSON.stringify(productos));
-      mostrarProductos();
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('hidden');
+      document.getElementById('mainContent').classList.toggle('expanded');
     }
 
-    function mostrarProductos() {
-      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-      const tabla = document.getElementById('tablaInventario');
-      tabla.innerHTML = productos.map((p, i) => `
-        <tr>
-          <td>${p.nombre}</td>
-          <td>${p.categoria}</td>
-          <td class="${p.stock <= 2 ? 'rojo' : ''}">${p.stock}</td>
-          <td>S/ ${p.precio}</td>
-          <td><button onclick="eliminarProducto(${i})">Eliminar</button></td>
-        </tr>`).join('');
+    function mostrarInventario() {
+      const productos = JSON.parse(localStorage.getItem('productos')) || [];
+      const tabla = document.getElementById('tabla-productos');
+      tabla.innerHTML = '';
+
+      productos.forEach(prod => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${prod.codigo}</td>
+          <td>${prod.nombre}</td>
+          <td class="${prod.stock <= 2 ? 'stock-bajo' : ''}">${prod.stock}</td>
+          <td class="precio">${prod.precio}</td>
+        `;
+        tabla.appendChild(fila);
+      });
     }
 
-    function eliminarProducto(index) {
-      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-      productos.splice(index, 1);
-      localStorage.setItem('productos', JSON.stringify(productos));
-      mostrarProductos();
-    }
-
-    function registrarEntrada() {
-      const nombre = document.getElementById('entradaNombre').value;
-      const cantidad = parseInt(document.getElementById('entradaCantidad').value);
-      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-      const index = productos.findIndex(p => p.nombre.toLowerCase() === nombre.toLowerCase());
-      if (index !== -1) {
-        productos[index].stock += cantidad;
-        localStorage.setItem('productos', JSON.stringify(productos));
-        mostrarProductos();
-      }
-    }
-
-    function registrarSalida() {
-      const nombre = document.getElementById('salidaNombre').value;
-      const cantidad = parseInt(document.getElementById('salidaCantidad').value);
-      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-      const index = productos.findIndex(p => p.nombre.toLowerCase() === nombre.toLowerCase());
-      if (index !== -1) {
-        productos[index].stock -= cantidad;
-        if (productos[index].stock < 0) productos[index].stock = 0;
-        localStorage.setItem('productos', JSON.stringify(productos));
-        mostrarProductos();
-      }
-    }
-
-    function emitirNotaVenta() {
-      const cliente = document.getElementById('clienteNota').value;
-      const producto = document.getElementById('productoNota').value;
-      const cantidad = document.getElementById('cantidadNota').value;
-      const total = document.getElementById('totalNota').value;
-      const fecha = new Date().toLocaleString();
-    }
-
-    function emitirFactura() {
-      const cliente = document.getElementById('razonSocial').value;
-      const producto = document.getElementById('productoFactura').value;
-      const cantidad = document.getElementById('cantidadFactura').value;
-      const total = document.getElementById('totalFactura').value;
-      const fecha = new Date().toLocaleString();
-      const registro = { fecha, cliente, producto, cantidad, total };
-      const datos = JSON.parse(localStorage.getItem('facturas') || '[]');
-      datos.push(registro);
-      localStorage.setItem('facturas', JSON.stringify(datos));
-      descontarStock(producto, cantidad);
-      mostrarFacturas();
-    }
-
-    function emitirBoleta() {
-      const cliente = document.getElementById('nombreCliente').value;
-      const producto = document.getElementById('productoBoleta').value;
-      const cantidad = document.getElementById('cantidadBoleta').value;
-      const total = document.getElementById('totalBoleta').value;
-      const fecha = new Date().toLocaleString();
-      const registro = { fecha, cliente, producto, cantidad, total };
-      const datos = JSON.parse(localStorage.getItem('boletas') || '[]');
-      datos.push(registro);
-      localStorage.setItem('boletas', JSON.stringify(datos));
-      descontarStock(producto, cantidad);
-      mostrarBoletas();
-    }
-
-    function mostrarFacturas() {
-      const datos = JSON.parse(localStorage.getItem('facturas') || '[]');
-      const tabla = document.getElementById('tablaFacturas');
-      tabla.innerHTML = datos.map((f, i) => `
-        <tr><td>${f.fecha}</td><td>${f.cliente}</td><td>${f.producto}</td><td>${f.cantidad}</td><td>${f.total}</td>
-        <td><button onclick="eliminarRegistro('facturas', ${i}, mostrarFacturas)">Eliminar</button></td></tr>`).join('');
-    }
-
-    function mostrarBoletas() {
-      const datos = JSON.parse(localStorage.getItem('boletas') || '[]');
-      const tabla = document.getElementById('tablaBoletas');
-      tabla.innerHTML = datos.map((b, i) => `
-        <tr><td>${b.fecha}</td><td>${b.cliente}</td><td>${b.producto}</td><td>${b.cantidad}</td><td>${b.total}</td>
-        <td><button onclick="eliminarRegistro('boletas', ${i}, mostrarBoletas)">Eliminar</button></td></tr>`).join('');
-    }
-
-    function eliminarRegistro(key, index, callback) {
-      const datos = JSON.parse(localStorage.getItem(key) || '[]');
-      datos.splice(index, 1);
-      localStorage.setItem(key, JSON.stringify(datos));
-      callback();
-    }
-
-    function descontarStock(nombre, cantidad) {
-      let productos = JSON.parse(localStorage.getItem('productos') || '[]');
-      const index = productos.findIndex(p => p.nombre.toLowerCase() === nombre.toLowerCase());
-      if (index !== -1) {
-        productos[index].stock -= parseInt(cantidad);
-        if (productos[index].stock < 0) productos[index].stock = 0;
-        localStorage.setItem('productos', JSON.stringify(productos));
-        mostrarProductos();
-      }
-    }
-
-    mostrarProductos();
-    mostrarFacturas();
-    mostrarBoletas();
+    mostrarInventario();
   </script></body>
 </html>
