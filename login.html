@@ -60,9 +60,7 @@
   </style>
 </head>
 <body>
-  <div class="imagen">
-    <!-- Aquí va el logo si quieres -->
-  </div>
+  <div class="imagen"></div>
   <div class="formulario">
     <h2>Iniciar Sesión</h2>
     <div class="campo">
@@ -87,10 +85,10 @@
       const clave = document.getElementById("clave").value;
       const error = document.getElementById("error");
 
-      // Puedes cambiar estos datos por los que desees
+      // Puedes cambiar estos valores por otros si deseas
       if (usuario === "admin" && clave === "1234") {
         localStorage.setItem("sesionActiva", JSON.stringify({ usuario }));
-        window.location.href = "index.html"; // tu sistema principal
+        window.location.href = "index.html";
       } else {
         error.textContent = "Usuario o contraseña incorrectos";
       }
