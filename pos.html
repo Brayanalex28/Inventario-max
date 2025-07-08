@@ -165,7 +165,7 @@
       <p><strong>Subtotal:</strong> S/ <span id="subtotal">0.00</span></p>
       <p><strong>IGV (18%):</strong> S/ <span id="igv">0.00</span></p>
       <p class="total">Total: S/ <span id="total">0.00</span></p>
-      <button class="pagar">PAGAR</button>
+      <button class="pagar" onclick="generarTicket()">PAGAR</button>
       <button class="cancelar" onclick="cancelarVenta()">CANCELAR</button>
       <button class="cancelar" onclick="cerrarSesion()">CERRAR SESIÓN</button>
       <div class="usuario">Usuario: <span id="usuarioActivo"></span></div>
@@ -188,6 +188,38 @@
   </div>
 
   <script>
+    function generarTicket() {
+  if (carrito.length === 0) {
+    alert("El carrito está vacío.");
+    return;
+  }
+
+  const cliente = prompt("Ingrese DNI o RUC del cliente:");
+  if (!cliente) return;
+
+  document.getElementById("ticketCliente").textContent = cliente;
+  const detalle = document.getElementById("ticketDetalle");
+  const totalTicket = document.getElementById("ticketTotal");
+  detalle.innerHTML = "";
+
+  let total = 0;
+  carrito.forEach(item => {
+    total += item.subtotal;
+    detalle.innerHTML += `
+      <tr>
+        <td>${item.nombre}</td>
+        <td>${item.cantidad}</td>
+        <td>S/ ${item.subtotal.toFixed(2)}</td>
+      </tr>`;
+  });
+
+  totalTicket.textContent = total.toFixed(2);
+  document.getElementById("popupTicket").style.display = "flex";
+}
+
+function cerrarPopup() {
+  document.getElementById("popupTicket").style.display = "none";
+}
     const user = JSON.parse(localStorage.getItem("sesionActiva"));
     if (user) {
       document.getElementById("usuarioActivo").textContent = user.usuario;
