@@ -71,7 +71,8 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
+      overflow-y: auto;
     }
     .resumen h2 {
       font-size: 18px;
@@ -104,6 +105,30 @@
       margin-top: 20px;
       text-align: center;
     }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background-color: #222;
+    }
+    tr:nth-child(even) {
+      background-color: #1a1a1a;
+    }
+    .btn-eliminar {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 8px;
+      cursor: pointer;
+    }
     @media screen and (max-width: 768px) {
       body {
         flex-direction: column;
@@ -133,30 +158,41 @@
   <!-- PRODUCTOS -->
   <div class="productos" id="productos"></div>
 
-  <!-- RESUMEN DE VENTA -->
+  <!-- RESUMEN + CARRITO -->
   <div class="resumen">
     <div>
       <h2>Resumen</h2>
       <p><strong>Subtotal:</strong> S/ <span id="subtotal">0.00</span></p>
       <p><strong>IGV (18%):</strong> S/ <span id="igv">0.00</span></p>
       <p class="total">Total: S/ <span id="total">0.00</span></p>
-    </div>
-    <div>
       <button class="pagar">PAGAR</button>
       <button class="cancelar" onclick="cancelarVenta()">CANCELAR</button>
       <button class="cancelar" onclick="cerrarSesion()">CERRAR SESIÓN</button>
       <div class="usuario">Usuario: <span id="usuarioActivo"></span></div>
     </div>
+
+    <div id="carritoDetalle">
+      <h2 style="margin-top: 20px;">Carrito</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="carritoTabla"></tbody>
+      </table>
+    </div>
   </div>
 
   <script>
-    // Usuario actual
     const user = JSON.parse(localStorage.getItem("sesionActiva"));
     if (user) {
       document.getElementById("usuarioActivo").textContent = user.usuario;
     }
 
-    // Categorías
     const categorias = [
       { nombre: "GRIFERÍA", color: "#e67e22" },
       { nombre: "DUCHAS", color: "#2980b9" },
@@ -172,6 +208,7 @@
 
     const contCategorias = document.getElementById("categorias");
     const contProductos = document.getElementById("productos");
+    const carritoTabla = document.getElementById("carritoTabla");
 
     categorias.forEach(cat => {
       const btn = document.createElement("button");
@@ -182,7 +219,6 @@
       contCategorias.appendChild(btn);
     });
 
-    // Simular productos en localStorage si no existen
     if (!localStorage.getItem("productos")) {
       localStorage.setItem("productos", JSON.stringify([
         { nombre: "Grifo Lavamanos", categoria: "GRIFERÍA", precio: 25 },
@@ -213,19 +249,44 @@
         div.innerHTML = `
           <h4>${prod.nombre}</h4>
           <p>Precio: S/ ${prod.precio.toFixed(2)}</p>
-          <button onclick="agregarAlCarrito(${prod.precio})">Agregar</button>
+          <button onclick="agregarAlCarrito('${prod.nombre}', ${prod.precio})">Agregar</button>
         `;
         contProductos.appendChild(div);
       });
     }
 
-    function agregarAlCarrito(precio) {
-      carrito.push(precio);
+    function agregarAlCarrito(nombre, precio) {
+      const item = carrito.find(p => p.nombre === nombre);
+      if (item) {
+        item.cantidad++;
+        item.subtotal = item.cantidad * item.precio;
+      } else {
+        carrito.push({ nombre, precio, cantidad: 1, subtotal: precio });
+      }
+      actualizarResumen();
+    }
+
+    function eliminarDelCarrito(nombre) {
+      const index = carrito.findIndex(p => p.nombre === nombre);
+      if (index !== -1) carrito.splice(index, 1);
       actualizarResumen();
     }
 
     function actualizarResumen() {
-      const subtotal = carrito.reduce((sum, val) => sum + val, 0);
+      let subtotal = 0;
+      carritoTabla.innerHTML = "";
+      carrito.forEach(item => {
+        subtotal += item.subtotal;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.nombre}</td>
+          <td>${item.cantidad}</td>
+          <td>S/ ${item.subtotal.toFixed(2)}</td>
+          <td><button class="btn-eliminar" onclick="eliminarDelCarrito('${item.nombre}')">X</button></td>
+        `;
+        carritoTabla.appendChild(row);
+      });
+
       const igv = subtotal * 0.18;
       const total = subtotal + igv;
 
