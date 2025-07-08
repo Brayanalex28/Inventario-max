@@ -14,12 +14,13 @@
       height: 100vh;
     }
     .categorias {
-      width: 70%;
+      width: 30%;
       padding: 15px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      display: flex;
+      flex-direction: column;
       gap: 10px;
       overflow-y: auto;
+      border-right: 2px solid #333;
     }
     .categoria {
       padding: 15px;
@@ -30,6 +31,39 @@
       cursor: pointer;
       color: white;
       text-align: center;
+    }
+    .productos {
+      width: 40%;
+      padding: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      overflow-y: auto;
+      border-right: 2px solid #333;
+    }
+    .producto {
+      background-color: #333;
+      padding: 10px;
+      border-radius: 8px;
+      width: calc(50% - 10px);
+    }
+    .producto h4 {
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    .producto p {
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+    .producto button {
+      width: 100%;
+      padding: 8px;
+      font-size: 13px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
     .resumen {
       width: 30%;
@@ -74,9 +108,12 @@
       body {
         flex-direction: column;
       }
-      .categorias, .resumen {
+      .categorias, .productos, .resumen {
         width: 100%;
         height: auto;
+      }
+      .producto {
+        width: 100%;
       }
     }
   </style>
@@ -90,10 +127,13 @@
     }
   </script>
 
-  <div class="categorias" id="categorias">
-    <!-- Botones generados por JS -->
-  </div>
+  <!-- CATEGORÍAS -->
+  <div class="categorias" id="categorias"></div>
 
+  <!-- PRODUCTOS -->
+  <div class="productos" id="productos"></div>
+
+  <!-- RESUMEN DE VENTA -->
   <div class="resumen">
     <div>
       <h2>Resumen</h2>
@@ -110,13 +150,13 @@
   </div>
 
   <script>
-    // Mostrar usuario activo
+    // Usuario actual
     const user = JSON.parse(localStorage.getItem("sesionActiva"));
     if (user) {
       document.getElementById("usuarioActivo").textContent = user.usuario;
     }
 
-    // Categorías personalizadas
+    // Categorías
     const categorias = [
       { nombre: "GRIFERÍA", color: "#e67e22" },
       { nombre: "DUCHAS", color: "#2980b9" },
@@ -130,27 +170,74 @@
       { nombre: "OFERTAS", color: "#f1c40f" },
     ];
 
-    const contenedor = document.getElementById("categorias");
+    const contCategorias = document.getElementById("categorias");
+    const contProductos = document.getElementById("productos");
 
     categorias.forEach(cat => {
       const btn = document.createElement("button");
       btn.classList.add("categoria");
       btn.style.backgroundColor = cat.color;
       btn.textContent = cat.nombre;
-      btn.onclick = () => seleccionarCategoria(cat.nombre);
-      contenedor.appendChild(btn);
+      btn.onclick = () => mostrarProductos(cat.nombre);
+      contCategorias.appendChild(btn);
     });
 
-    function seleccionarCategoria(nombre) {
-      alert(`Mostrar productos de: ${nombre}`);
-      // Aquí más adelante se mostrará la lista de productos
+    // Simular productos en localStorage si no existen
+    if (!localStorage.getItem("productos")) {
+      localStorage.setItem("productos", JSON.stringify([
+        { nombre: "Grifo Lavamanos", categoria: "GRIFERÍA", precio: 25 },
+        { nombre: "Grifo Cocina", categoria: "GRIFERÍA", precio: 35 },
+        { nombre: "Ducha Eléctrica", categoria: "DUCHAS", precio: 80 },
+        { nombre: "Tubo PVC 1/2", categoria: "TUBERÍAS PVC", precio: 12 },
+        { nombre: "Lavatorio Blanco", categoria: "LAVATORIOS", precio: 95 },
+        { nombre: "Inodoro One Piece", categoria: "INODOROS", precio: 180 },
+        { nombre: "Manguera Reforzada", categoria: "MANGUERAS", precio: 30 }
+      ]));
+    }
+
+    const carrito = [];
+
+    function mostrarProductos(categoriaSeleccionada) {
+      const productos = JSON.parse(localStorage.getItem("productos")) || [];
+      const filtrados = productos.filter(p => p.categoria === categoriaSeleccionada);
+      contProductos.innerHTML = "";
+
+      if (filtrados.length === 0) {
+        contProductos.innerHTML = `<p>No hay productos en esta categoría.</p>`;
+        return;
+      }
+
+      filtrados.forEach(prod => {
+        const div = document.createElement("div");
+        div.classList.add("producto");
+        div.innerHTML = `
+          <h4>${prod.nombre}</h4>
+          <p>Precio: S/ ${prod.precio.toFixed(2)}</p>
+          <button onclick="agregarAlCarrito(${prod.precio})">Agregar</button>
+        `;
+        contProductos.appendChild(div);
+      });
+    }
+
+    function agregarAlCarrito(precio) {
+      carrito.push(precio);
+      actualizarResumen();
+    }
+
+    function actualizarResumen() {
+      const subtotal = carrito.reduce((sum, val) => sum + val, 0);
+      const igv = subtotal * 0.18;
+      const total = subtotal + igv;
+
+      document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+      document.getElementById("igv").textContent = igv.toFixed(2);
+      document.getElementById("total").textContent = total.toFixed(2);
     }
 
     function cancelarVenta() {
       if (confirm("¿Seguro que deseas cancelar esta venta?")) {
-        document.getElementById("subtotal").textContent = "0.00";
-        document.getElementById("igv").textContent = "0.00";
-        document.getElementById("total").textContent = "0.00";
+        carrito.length = 0;
+        actualizarResumen();
       }
     }
 
