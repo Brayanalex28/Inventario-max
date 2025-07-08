@@ -64,6 +64,12 @@
       background-color: #c0392b;
       color: white;
     }
+    .usuario {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 20px;
+      text-align: center;
+    }
     @media screen and (max-width: 768px) {
       body {
         flex-direction: column;
@@ -76,6 +82,14 @@
   </style>
 </head>
 <body>
+  <!-- 🔐 Protección de sesión -->
+  <script>
+    const sesion = JSON.parse(localStorage.getItem("sesionActiva"));
+    if (!sesion) {
+      window.location.href = "login.html";
+    }
+  </script>
+
   <div class="categorias" id="categorias">
     <!-- Botones generados por JS -->
   </div>
@@ -90,11 +104,19 @@
     <div>
       <button class="pagar">PAGAR</button>
       <button class="cancelar" onclick="cancelarVenta()">CANCELAR</button>
+      <button class="cancelar" onclick="cerrarSesion()">CERRAR SESIÓN</button>
+      <div class="usuario">Usuario: <span id="usuarioActivo"></span></div>
     </div>
   </div>
 
   <script>
-    // Categorías personalizadas (puedes editarlas o cargar desde localStorage)
+    // Mostrar usuario activo
+    const user = JSON.parse(localStorage.getItem("sesionActiva"));
+    if (user) {
+      document.getElementById("usuarioActivo").textContent = user.usuario;
+    }
+
+    // Categorías personalizadas
     const categorias = [
       { nombre: "GRIFERÍA", color: "#e67e22" },
       { nombre: "DUCHAS", color: "#2980b9" },
@@ -104,7 +126,7 @@
       { nombre: "CONECTORES", color: "#d35400" },
       { nombre: "TUBERÍAS PVC", color: "#34495e" },
       { nombre: "MANGUERAS", color: "#c0392b" },
-      { nombre: "VALVULAS", color: "#2ecc71" },
+      { nombre: "VÁLVULAS", color: "#2ecc71" },
       { nombre: "OFERTAS", color: "#f1c40f" },
     ];
 
@@ -121,7 +143,7 @@
 
     function seleccionarCategoria(nombre) {
       alert(`Mostrar productos de: ${nombre}`);
-      // Aquí más adelante mostraremos los productos según la categoría
+      // Aquí más adelante se mostrará la lista de productos
     }
 
     function cancelarVenta() {
@@ -130,6 +152,11 @@
         document.getElementById("igv").textContent = "0.00";
         document.getElementById("total").textContent = "0.00";
       }
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem("sesionActiva");
+      window.location.href = "login.html";
     }
   </script>
 </body>
